@@ -6,17 +6,17 @@ from customtkinter import filedialog
 from tkinter import messagebox
 
 class ImageController:
-    """Gère la logique métier de l'application."""
+    """Handle image operations and communicate with the event bus."""
     
     def __init__(self, event_bus: EventBus, image_state: ImageStateManager):
         self.event_bus = event_bus
         self.image_state = image_state
         
-        # Abonnement aux événements
+        # Subscribing to events
         self._subscribe_to_events()
     
     def _subscribe_to_events(self):
-        """S'abonne aux événements du bus."""
+        """Subscribe to event bus events."""
         self.event_bus.subscribe("import_requested", self._handle_import)
         self.event_bus.subscribe("save_requested", self._handle_save)
         self.event_bus.subscribe("undo_requested", self._handle_undo)
@@ -25,10 +25,10 @@ class ImageController:
         self.event_bus.subscribe("image_operation_applied", self._handle_operation)
     
     def _handle_import(self, data=None):
-        """Gère l'import d'une image."""
+        """Handle image import."""
         filetypes = [
             ("Images", "*.png *.jpg *.jpeg *.gif *.bmp"),
-            ("Tous les fichiers", "*.*")
+            ("All files", "*.*")
         ]
         
         filepath = filedialog.askopenfilename(
@@ -45,24 +45,24 @@ class ImageController:
             print(image)
             self.event_bus.publish("image_loaded", image)
         except Exception as e:
-            messagebox.showerror("Erreur", f"Impossible de charger l'image : {e}")
+            messagebox.showerror("Error", f"Unable to load image: {e}")
     
     def _handle_save(self, data=None):
-        """Gère la sauvegarde de l'image."""
+        """Handle image saving."""
         current_image = self.image_state.get_current_image()
         
         if current_image is None:
-            messagebox.showwarning("Attention", "Aucune image à sauvegarder")
+            messagebox.showwarning("Warning", "No image to save")
             return
         
         filetypes = [
             ("PNG", "*.png"),
             ("JPEG", "*.jpg *.jpeg"),
-            ("Tous les fichiers", "*.*")
+            ("All files", "*.*")
         ]
         
         filepath = filedialog.asksaveasfilename(
-            title="Enregistrer l'image",
+            title="Save Image",
             defaultextension=".png",
             filetypes=filetypes
         )
@@ -73,40 +73,34 @@ class ImageController:
         try:
             current_image.save(filepath)
         except Exception as e:
-            messagebox.showerror("Erreur", f"Impossible d'enregistrer : {e}")
+            messagebox.showerror("Error", f"Unable to save image: {e}")
     
     def _handle_undo(self, data=None):
-        """Gère l'annulation."""
+        """Handle undo."""
         image = self.image_state.undo()
         
         if image:
             self.event_bus.publish("image_modified", image)
-            self.event_bus.publish("status_message", "Action annulée")
         else:
-            messagebox.showinfo("Info", "Rien à annuler")
+            messagebox.showinfo("Info", "Nothing to undo")
     
     def _handle_redo(self, data=None):
-        """Gère le refaire."""
+        """Handle redo."""
         image = self.image_state.redo()
         
         if image:
             self.event_bus.publish("image_modified", image)
-            self.event_bus.publish("status_message", "Action refaite")
+            self.event_bus.publish("status_message", "Action redone")
         else:
-            messagebox.showinfo("Info", "Rien à refaire")
-    
-    def _handle_zoom(self, zoom_delta: float):
-        """Gère le changement de zoom."""
-        self.event_bus.publish("zoom_changed", zoom_delta)
+            messagebox.showinfo("Info", "Nothing to redo")
     
     def _handle_operation(self, modified_image):
-        """Applique une opération sur l'image."""
+        """Apply an operation on the image."""
         try:
-            # Sauvegarde l'image modifiée dans l'état
+            # Save the modified image in the state
             self.image_state.apply_operation(lambda img: modified_image)
             
-            # Notifie les vues
+            # Notify the views
             self.event_bus.publish("image_modified", modified_image)
-            self.event_bus.publish("status_message", "Modification appliquée")
         except Exception as e:
-            messagebox.showerror("Erreur", f"Impossible d'appliquer l'opération : {e}")
+            messagebox.showerror("Error", f"Unable to apply operation: {e}")
