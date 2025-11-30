@@ -40,9 +40,10 @@ class ImageController:
             return
         
         try:
-            image = self.image_state.load_image(filepath)
+            self.image_state.load_image(filepath)
+            image = self.image_state.get_current_image()
+            print(image)
             self.event_bus.publish("image_loaded", image)
-            self.event_bus.publish("status_message", f"Image chargée : {filepath}")
         except Exception as e:
             messagebox.showerror("Erreur", f"Impossible de charger l'image : {e}")
     
@@ -71,7 +72,6 @@ class ImageController:
         
         try:
             current_image.save(filepath)
-            self.event_bus.publish("status_message", f"Image enregistrée : {filepath}")
         except Exception as e:
             messagebox.showerror("Erreur", f"Impossible d'enregistrer : {e}")
     

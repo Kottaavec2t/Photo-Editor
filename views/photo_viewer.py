@@ -7,12 +7,13 @@ class PhotoViewer(ctk.CTkFrame):
     """Affiche l'image avec zoom et défilement."""
     
     def __init__(self, master, event_bus: EventBus):
-        super().__init__(master)
+        super().__init__(master, fg_color="transparent")
         self.event_bus = event_bus
         self.zoom = 1.0
         self.current_image = None
         
         self._create_widgets()
+        self._setup_bindings() # ! After the widgets are created !
         self._setup_subscriptions()
     
     def _create_widgets(self):
@@ -28,7 +29,8 @@ class PhotoViewer(ctk.CTkFrame):
         self.canvas = ctk.CTkCanvas(
             self,
             yscrollcommand=self.yscroll.set,
-            xscrollcommand=self.xscroll.set
+            xscrollcommand=self.xscroll.set,
+            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1]
         )
         self.canvas.pack(fill=ctk.BOTH, expand=True)
         
@@ -42,10 +44,11 @@ class PhotoViewer(ctk.CTkFrame):
             anchor=ctk.NW,
             window=self.image_label
         )
-        
-        # Bindings
+
+    def _setup_bindings(self):
+        """Configure les bindings d'événements."""
         self.canvas.bind("<MouseWheel>", self._on_mousewheel)
-        self.canvas.bind("<Control-MouseWheel>", self._on_zoom)
+        self.canvas.bind("<Control-MouseWheel>", self._on_ctrl_mousewheel)
     
     def _setup_subscriptions(self):
         """S'abonne aux événements du bus."""
@@ -55,6 +58,7 @@ class PhotoViewer(ctk.CTkFrame):
     
     def _on_image_update(self, image: Image.Image):
         """Met à jour l'affichage avec la nouvelle image."""
+        print('test')
         self.current_image = image
         self._update_display()
     
@@ -72,15 +76,21 @@ class PhotoViewer(ctk.CTkFrame):
             self.current_image,
             size=(width, height)
         )
-        
+        print('Updating display with zoom:', self.zoom)
         self.image_label.configure(image=ctk_image, text="")
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
     
     def _on_mousewheel(self, event):
         """Gère le défilement."""
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        if self._is_scrollbar_active('y'):
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
     
-    def _on_zoom(self, event):
+    def _on_alt_mousewheel(self, event):
+        """Gère le défilement horizontal avec Alt+molette."""
+        if self._is_scrollbar_active('x'):
+            self.canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
+    
+    def _on_ctrl_mousewheel(self, event):
         """Gère le zoom avec Ctrl+molette."""
         if event.delta > 0:
             self.event_bus.publish("zoom_requested", 0.1)

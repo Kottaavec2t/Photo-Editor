@@ -17,8 +17,6 @@ class MainWindow(ctk.CTk):
         self.title("Photo Editor")
         self._setup_ui()
 
-        self.bind_all("<Button-1>", lambda event: event.widget.focus_set())
-
         self.top_bar = TopBar(self, event_bus)
         self.photo_viewer = PhotoViewer(self, event_bus)
 
