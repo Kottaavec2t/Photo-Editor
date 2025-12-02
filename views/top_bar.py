@@ -211,7 +211,7 @@ class TopBar(ctk.CTkFrame):
     
     def _on_zoom_click(self, delta: float):
         """Demande un changement de zoom."""
-        self.event_bus.publish("zoom_requested", delta)
+        self.event_bus.publish("zoom_changed", delta)
     
     def _on_edit_click(self):
         """Ouvre la popup d'édition."""

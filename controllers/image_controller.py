@@ -21,7 +21,6 @@ class ImageController:
         self.event_bus.subscribe("save_requested", self._handle_save)
         self.event_bus.subscribe("undo_requested", self._handle_undo)
         self.event_bus.subscribe("redo_requested", self._handle_redo)
-        self.event_bus.subscribe("zoom_requested", self._handle_zoom)
         self.event_bus.subscribe("image_operation_applied", self._handle_operation)
     
     def _handle_import(self, data=None):
