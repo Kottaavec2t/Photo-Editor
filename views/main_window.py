@@ -2,7 +2,7 @@ import customtkinter as ctk
 from controllers.event_bus import EventBus
 from models.settings import SettingsManager
 from views.top_bar import TopBar
-from views.photo_viewer import PhotoViewer
+from views.workspace import Workspace
 
 class MainWindow(ctk.CTk):
     ''' Main Application Class. '''
@@ -18,10 +18,10 @@ class MainWindow(ctk.CTk):
         self._setup_ui()
 
         self.top_bar = TopBar(self, event_bus)
-        self.photo_viewer = PhotoViewer(self, event_bus)
+        self.workspace = Workspace(self, event_bus, settings)
 
         self.top_bar.pack(fill=ctk.X, padx=5, pady=(5, 0))
-        self.photo_viewer.pack(fill=ctk.BOTH, expand=True, padx=5, pady=5)
+        self.workspace.pack(fill=ctk.BOTH, expand=True, padx=5, pady=5)
 
         self._setup_bindings()
         

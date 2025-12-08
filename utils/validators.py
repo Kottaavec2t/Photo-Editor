@@ -9,3 +9,11 @@ def validate_numeric_input(value: str, min_val=None, max_val=None) -> float:
         return num
     except ValueError:
         raise ValueError(f"'{value}' is not a valid number")
+    
+def validate_type(value: str, expected_type: type) -> bool:
+    """Validate that the input value is of the expected type."""
+    try:
+        expected_type(value)
+        return True
+    except (ValueError, TypeError):
+        return False

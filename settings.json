@@ -1,9 +1,6 @@
 {
     "appearance": "Dark",
     "color_theme": "green",
-    "geometry": null,
-    "fullscreen": true,
-    "last_directory": "",
-    "max_history": 50,
-    "auto_save": false
+    "geometry": "800x600+315+160",
+    "fullscreen": false
 }

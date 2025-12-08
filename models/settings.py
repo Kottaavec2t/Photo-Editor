@@ -12,9 +12,11 @@ class AppSettings:
     color_theme: str = "green"
     geometry: Optional[str] = None
     fullscreen: bool = False
-    last_directory: str = ""
-    max_history: int = 50
-    auto_save: bool = False
+    panels = {
+        "position": "right",
+        "width": 500,
+        "enabled": ["edit"]
+    }
 
 class SettingsManager:
     """Gère le chargement et la sauvegarde des paramètres."""

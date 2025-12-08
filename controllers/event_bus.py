@@ -11,8 +11,8 @@ class EventBus:
             self._listeners[event_type] = []
         self._listeners[event_type].append(callback)
     
-    def publish(self, event_type: str, *args, **kwargs):
+    def publish(self, event_type: str, params: dict = None):
         '''Publish an event to all subscribed callbacks.'''
         if event_type in self._listeners:
             for callback in self._listeners[event_type]:
-                callback(*args, **kwargs)
+                callback(params)
