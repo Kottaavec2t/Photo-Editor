@@ -1,6 +1,13 @@
 {
     "appearance": "Dark",
     "color_theme": "green",
-    "geometry": "800x600+315+160",
-    "fullscreen": false
+    "geometry": null,
+    "fullscreen": true,
+    "panels": {
+        "position": "right",
+        "width": 500,
+        "enabled": [
+            "edit"
+        ]
+    }
 }
