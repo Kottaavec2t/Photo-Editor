@@ -211,7 +211,7 @@ class TopBar(ctk.CTkFrame):
     
     def _on_zoom_click(self, delta: float):
         """Demande un changement de zoom."""
-        self.event_bus.publish("zoom_changed", delta)
+        self.event_bus.publish("zoom_changed", {'zoom_delta': delta})
     
     def _on_edit_click(self):
         """Ouvre la popup d'édition."""
@@ -233,7 +233,7 @@ class TopBar(ctk.CTkFrame):
             self._execute_command(query)
         else:
             # Recherche normale
-            self.event_bus.publish("search_requested", query)
+            self.event_bus.publish("search_requested", {'query': query})
     
     def _on_clear_search(self):
         """Efface la barre de recherche."""
@@ -246,12 +246,7 @@ class TopBar(ctk.CTkFrame):
         args = parts[1:] if len(parts) > 1 else []
         
         commands = {
-            '/help': self._cmd_help,
-            '/state': self._cmd_state,
-            '/theme': self._cmd_theme,
-            '/appearance': self._cmd_appearance,
             '/restart': self._cmd_restart,
-            '/about': self._cmd_about,
         }
         
         if cmd in commands:
@@ -267,101 +262,9 @@ class TopBar(ctk.CTkFrame):
     
     # --[[ Commandes slash ]]--
     
-    def _cmd_help(self, args):
-        """Affiche l'aide des commandes."""
-        help_text = """
-Commandes disponibles :
-/help - Affiche cette aide
-/state [normal|zoomed] - Change l'état de la fenêtre
-/theme [blue|green|dark-blue] - Change le thème
-/appearance [Dark|Light|System] - Change l'apparence
-/restart - Redémarre l'application
-/about - À propos de l'application
-        """.strip()
-        
-        self.event_bus.publish("show_message", {
-            "type": "info",
-            "text": help_text
-        })
-    
-    def _cmd_state(self, args):
-        """Change l'état de la fenêtre."""
-        if not args:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "Usage: /state [normal|zoomed]"
-            })
-            return
-        
-        state = args[0].lower()
-        if state in ['normal', 'zoomed']:
-            self.event_bus.publish("window_state_change", state)
-        else:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "État invalide. Utilisez 'normal' ou 'zoomed'."
-            })
-    
-    def _cmd_theme(self, args):
-        """Change le thème de couleur."""
-        if not args:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "Usage: /theme [blue|green|dark-blue]"
-            })
-            return
-        
-        theme = args[0].lower()
-        if theme in ['blue', 'green', 'dark-blue']:
-            self.event_bus.publish("theme_change", theme)
-            self.event_bus.publish("show_message", {
-                "type": "success",
-                "text": f"Thème changé en {theme}. Redémarrez pour voir les changements."
-            })
-        else:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "Thème invalide. Choisissez: blue, green, dark-blue"
-            })
-    
-    def _cmd_appearance(self, args):
-        """Change le mode d'apparence."""
-        if not args:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "Usage: /appearance [Dark|Light|System]"
-            })
-            return
-        
-        appearance = args[0].capitalize()
-        if appearance in ['Dark', 'Light', 'System']:
-            self.event_bus.publish("appearance_change", appearance)
-            self.event_bus.publish("show_message", {
-                "type": "success",
-                "text": f"Apparence changée en {appearance}"
-            })
-        else:
-            self.event_bus.publish("show_message", {
-                "type": "error",
-                "text": "Apparence invalide. Choisissez: Dark, Light, System"
-            })
-    
     def _cmd_restart(self, args):
         """Redémarre l'application."""
         self.event_bus.publish("restart_requested")
-    
-    def _cmd_about(self, args):
-        """Affiche les infos de l'application."""
-        about_text = """
-Photo Editor v1.0
-Architecture refactorisée avec Event Bus
-Développé avec CustomTkinter et PIL
-        """.strip()
-        
-        self.event_bus.publish("show_message", {
-            "type": "info",
-            "text": about_text
-        })
     
     # --[[ Mise à jour de l'interface ]]--
     
