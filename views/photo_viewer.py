@@ -57,10 +57,10 @@ class PhotoViewer(ctk.CTkFrame):
         self.event_bus.subscribe("image_modified", self._on_image_update)
         self.event_bus.subscribe("zoom_changed", self._on_zoom_changed)
     
-    def _on_image_update(self, image: Image.Image):
+    def _on_image_update(self, data: dict = None):
         """Met à jour l'affichage avec la nouvelle image."""
         print('test')
-        self.current_image = image
+        self.current_image = data['image']
         self._update_display()
     
     def _update_display(self):
@@ -98,7 +98,7 @@ class PhotoViewer(ctk.CTkFrame):
         else:
             self.event_bus.publish("zoom_requested", {'zoom_delta': -0.1})
     
-    def _on_zoom_changed(self, data: dict):
+    def _on_zoom_changed(self, data: dict = None):
         """Applique le changement de zoom."""
         new_zoom = self.zoom + data['zoom_delta']
         if 0.1 <= new_zoom <= 10:
