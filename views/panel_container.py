@@ -30,6 +30,6 @@ class PanelContainer(ctk.CTkFrame):
                 panel_instance = panel_class(self, self.event_bus)
                 panel_instance.pack(fill=ctk.X, padx=5, pady=5)
     
-    def _on_panel_order_changed(self, data):
+    def _on_panel_order_changed(self, data: dict = None):
         ''' Handle changes in panel order. '''
         pass

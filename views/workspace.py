@@ -12,6 +12,7 @@ class Workspace(ctk.CTkFrame):
         self.settings = settings
 
         self._setup_ui()
+        self._setup_subscriptions()
 
     def _setup_subscriptions(self):
         ''' Setup event subscriptions. '''
@@ -30,10 +31,10 @@ class Workspace(ctk.CTkFrame):
             self.panel_container.pack(side=ctk.RIGHT, fill=ctk.Y)
             self.photo_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True)
 
-    def _on_panel_configuration_changed(self, config):
+    def _on_panel_configuration_changed(self, data: dict = None):
         ''' Handle changes in panel configuration. '''
         
-        if config.get("position") == "right":
+        if data['panels'].get("position") == "right":
             self.panel_container.pack(side=ctk.RIGHT, fill=ctk.Y)
             self.photo_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True)
         else:

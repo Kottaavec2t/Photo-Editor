@@ -365,7 +365,7 @@ Développé avec CustomTkinter et PIL
     
     # --[[ Mise à jour de l'interface ]]--
     
-    def _on_image_loaded(self, data):
+    def _on_image_loaded(self, data: dict = None):
         """Active les boutons quand une image est chargée."""
         self.save_btn.configure(state="normal")
         self.zoom_out_btn.configure(state="normal")
@@ -373,7 +373,7 @@ Développé avec CustomTkinter et PIL
         self.edit_btn.configure(state="normal")
         self.crop_btn.configure(state="normal")
     
-    def _on_image_modified(self, data):
+    def _on_image_modified(self, data: dict = None):
         """Réagit à la modification d'image."""
         pass
     

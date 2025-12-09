@@ -48,6 +48,7 @@ class PhotoViewer(ctk.CTkFrame):
     def _setup_bindings(self):
         """Configure les bindings d'événements."""
         self.canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<Alt-MouseWheel>", self._on_alt_mousewheel)
         self.canvas.bind("<Control-MouseWheel>", self._on_ctrl_mousewheel)
     
     def _setup_subscriptions(self):
@@ -93,13 +94,13 @@ class PhotoViewer(ctk.CTkFrame):
     def _on_ctrl_mousewheel(self, event):
         """Gère le zoom avec Ctrl+molette."""
         if event.delta > 0:
-            self.event_bus.publish("zoom_requested", 0.1)
+            self.event_bus.publish("zoom_requested", {'zoom_delta': 0.1})
         else:
-            self.event_bus.publish("zoom_requested", -0.1)
+            self.event_bus.publish("zoom_requested", {'zoom_delta': -0.1})
     
-    def _on_zoom_changed(self, zoom_delta: float):
+    def _on_zoom_changed(self, data: dict):
         """Applique le changement de zoom."""
-        new_zoom = self.zoom + zoom_delta
+        new_zoom = self.zoom + data['zoom_delta']
         if 0.1 <= new_zoom <= 10:
             self.zoom = new_zoom
             self._update_display()

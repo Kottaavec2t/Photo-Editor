@@ -23,7 +23,7 @@ class ImageController:
         self.event_bus.subscribe("redo_requested", self._handle_redo)
         self.event_bus.subscribe("image_operation_applied", self._handle_operation)
     
-    def _handle_import(self, data=None):
+    def _handle_import(self, data: dict = None):
         """Handle image import."""
         filetypes = [
             ("Images", "*.png *.jpg *.jpeg *.gif *.bmp"),
@@ -46,7 +46,7 @@ class ImageController:
         except Exception as e:
             messagebox.showerror("Error", f"Unable to load image: {e}")
     
-    def _handle_save(self, data=None):
+    def _handle_save(self, data: dict = None):
         """Handle image saving."""
         current_image = self.image_state.get_current_image()
         
@@ -74,7 +74,7 @@ class ImageController:
         except Exception as e:
             messagebox.showerror("Error", f"Unable to save image: {e}")
     
-    def _handle_undo(self, data=None):
+    def _handle_undo(self, data: dict = None):
         """Handle undo."""
         image = self.image_state.undo()
         
@@ -83,7 +83,7 @@ class ImageController:
         else:
             messagebox.showinfo("Info", "Nothing to undo")
     
-    def _handle_redo(self, data=None):
+    def _handle_redo(self, data: dict = None):
         """Handle redo."""
         image = self.image_state.redo()
         
