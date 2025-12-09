@@ -42,7 +42,7 @@ class ImageController:
             self.image_state.load_image(filepath)
             image = self.image_state.get_current_image()
             print(image)
-            self.event_bus.publish("image_loaded", image)
+            self.event_bus.publish("image_loaded", {'image': image})
         except Exception as e:
             messagebox.showerror("Error", f"Unable to load image: {e}")
     
@@ -79,7 +79,7 @@ class ImageController:
         image = self.image_state.undo()
         
         if image:
-            self.event_bus.publish("image_modified", image)
+            self.event_bus.publish("image_modified", {'image': image})
         else:
             messagebox.showinfo("Info", "Nothing to undo")
     
@@ -88,8 +88,7 @@ class ImageController:
         image = self.image_state.redo()
         
         if image:
-            self.event_bus.publish("image_modified", image)
-            self.event_bus.publish("status_message", "Action redone")
+            self.event_bus.publish("image_modified", {'image': image})
         else:
             messagebox.showinfo("Info", "Nothing to redo")
     
@@ -100,6 +99,6 @@ class ImageController:
             self.image_state.apply_operation(lambda img: modified_image)
             
             # Notify the views
-            self.event_bus.publish("image_modified", modified_image)
+            self.event_bus.publish("image_modified", {'image': modified_image})
         except Exception as e:
             messagebox.showerror("Error", f"Unable to apply operation: {e}")
