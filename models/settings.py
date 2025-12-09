@@ -3,20 +3,20 @@
 import json
 import os
 from typing import Any, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 
 @dataclass
 class AppSettings:
     """Structure des paramètres de l'application."""
-    appearance: str = "Dark"
+    appearance: str = "Light"
     color_theme: str = "green"
     geometry: Optional[str] = None
     fullscreen: bool = False
-    panels = {
+    panels: dict = field(default_factory=lambda: dict({
         "position": "right",
         "width": 500,
         "enabled": ["edit"]
-    }
+    }))
 
 class SettingsManager:
     """Gère le chargement et la sauvegarde des paramètres."""
@@ -24,6 +24,7 @@ class SettingsManager:
     def __init__(self, filepath: str = "settings.json"):
         self._filepath = filepath
         self._settings = self._load()
+        print(f"Paramètres chargés : {self._settings}")
     
     def _load(self) -> AppSettings:
         """Charge les paramètres depuis le fichier JSON."""
