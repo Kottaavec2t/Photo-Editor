@@ -30,6 +30,9 @@ class Workspace(ctk.CTkFrame):
         if panels_settings and panels_settings.get("position") == "right":
             self.panel_container.pack(side=ctk.RIGHT, fill=ctk.Y)
             self.photo_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True)
+        else:
+            self.panel_container.pack(side=ctk.LEFT, fill=ctk.Y)
+            self.photo_frame.pack(side=ctk.RIGHT, fill=ctk.BOTH, expand=True)
 
     def _on_panel_configuration_changed(self, data: dict = None):
         ''' Handle changes in panel configuration. '''
