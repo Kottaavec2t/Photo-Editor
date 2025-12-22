@@ -30,7 +30,7 @@ class PhotoViewer(ctk.CTkFrame):
             self,
             yscrollcommand=self.yscroll.set,
             xscrollcommand=self.xscroll.set,
-            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1]
+            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1] # Transparent bg
         )
         self.canvas.pack(fill=ctk.BOTH, expand=True)
         
@@ -41,15 +41,14 @@ class PhotoViewer(ctk.CTkFrame):
         self.image_label = ctk.CTkLabel(self.canvas, text="Aucune image")
         self.canvas_window = self.canvas.create_window(
             0, 0,
-            anchor=ctk.NW,
             window=self.image_label
         )
 
     def _setup_bindings(self):
         """Configure les bindings d'événements."""
-        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
-        self.canvas.bind("<Alt-MouseWheel>", self._on_alt_mousewheel)
-        self.canvas.bind("<Control-MouseWheel>", self._on_ctrl_mousewheel)
+        self.image_label.bind("<MouseWheel>", self._on_mousewheel)
+        self.image_label.bind("<Alt-MouseWheel>", self._on_alt_mousewheel)
+        self.image_label.bind("<Control-MouseWheel>", self._on_ctrl_mousewheel)
     
     def _setup_subscriptions(self):
         """S'abonne aux événements du bus."""
@@ -77,8 +76,12 @@ class PhotoViewer(ctk.CTkFrame):
             self.current_image,
             size=(width, height)
         )
-        print('Updating display with zoom:', self.zoom)
         self.image_label.configure(image=ctk_image, text="")
+
+        # Centrer l'image dans le canvas
+        self.canvas.update_idletasks()
+        self.canvas.coords(self.canvas_window, self.canvas.winfo_width() // 2, self.canvas.winfo_height() // 2)
+
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
     
     def _on_mousewheel(self, event):
@@ -94,9 +97,9 @@ class PhotoViewer(ctk.CTkFrame):
     def _on_ctrl_mousewheel(self, event):
         """Gère le zoom avec Ctrl+molette."""
         if event.delta > 0:
-            self.event_bus.publish("zoom_requested", {'zoom_delta': 0.1})
+            self.event_bus.publish("zoom_changed", {'zoom_delta': 0.1})
         else:
-            self.event_bus.publish("zoom_requested", {'zoom_delta': -0.1})
+            self.event_bus.publish("zoom_changed", {'zoom_delta': -0.1})
     
     def _on_zoom_changed(self, data: dict = None):
         """Applique le changement de zoom."""
@@ -104,3 +107,22 @@ class PhotoViewer(ctk.CTkFrame):
         if 0.1 <= new_zoom <= 10:
             self.zoom = new_zoom
             self._update_display()
+
+    def _is_scrollbar_active(self, axe: str ="x") -> bool:
+        """Vérifie si les scrollbars sont nécessaires (l'image dépasse la taille du canvas)"""
+        self.canvas.update_idletasks()
+        
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+        
+        scroll_region = self.canvas.cget("scrollregion")
+        if scroll_region:
+            coords = scroll_region.split()
+            if len(coords) == 4:
+                content_width = float(coords[2]) - float(coords[0])
+                content_height = float(coords[3]) - float(coords[1])
+                
+                if axe == 'y': return content_height > canvas_height 
+                if axe == 'x': return content_width > canvas_width 
+        
+        return False
