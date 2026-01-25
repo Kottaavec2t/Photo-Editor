@@ -280,12 +280,14 @@ class TopBar(ctk.CTkFrame):
         """Réagit à la modification d'image."""
         pass
     
-    def _update_undo_button(self, available: bool):
+    def _update_undo_button(self, data: dict = None):
         """Active/désactive le bouton Undo."""
+        available = data.get("available", False) if data else False
         self.undo_btn.configure(state="normal" if available else "disabled")
         # Maybe change color to indicate availability
 
-    def _update_redo_button(self, available: bool):
+    def _update_redo_button(self, data: dict = None):
         """Active/désactive le bouton Redo."""
+        available = data.get("available", False) if data else False
         self.redo_btn.configure(state="normal" if available else "disabled")
         # Maybe change color to indicate availability
