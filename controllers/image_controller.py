@@ -1,7 +1,14 @@
 """Contrôleur principal pour les opérations sur l'image."""
 from controllers.event_bus import EventBus
 from models.image_state import ImageStateManager
-from utils.image_operations import *
+from models.command import (
+    BrightnessCommand,
+    RotationCommand,
+    GrayscaleCommand,
+    CropCommand,
+    ResizeCommand,
+)
+import utils.image_operations as img_op
 from customtkinter import filedialog
 from tkinter import messagebox
 
@@ -80,10 +87,10 @@ class ImageController:
         
         if image:
             self.event_bus.publish("image_modified", {'image': image})
-
             # Notify that redo is available
-            if self.image_state.can_redo():
-                self.event_bus.publish("redo_available", {'available': True})
+            self.event_bus.publish("redo_available", {'available': self.image_state.can_redo()})
+            # Notify that undo availability changed
+            self.event_bus.publish("undo_available", {'available': self.image_state.can_undo()})
         else:
             messagebox.showinfo("Info", "Nothing to undo")
     
@@ -93,20 +100,59 @@ class ImageController:
         
         if image:
             self.event_bus.publish("image_modified", {'image': image})
-            
             # Notify that undo is available
-            if self.image_state.can_undo():
-                self.event_bus.publish("undo_available", {'available': True})
+            self.event_bus.publish("undo_available", {'available': self.image_state.can_undo()})
+            # Notify that redo availability changed
+            self.event_bus.publish("redo_available", {'available': self.image_state.can_redo()})
         else:
             messagebox.showinfo("Info", "Nothing to redo")
     
     def _handle_operation(self, data: dict = None):
         """Apply an operation on the image."""
         try:
-            # Save the modified image in the state
-            self.image_state.apply_operation(lambda img: data['modified_image'])
+            current_image = self.image_state.get_current_image()
+            if current_image is None or data is None:
+                return
             
-            # Notify the views
-            self.event_bus.publish("image_modified", {'image': data['modified_image']})
+            # Determine the operation type if provided
+            operation_type = data.get('operation_type', 'custom')
+            description = data.get('description', 'Custom Operation')
+            
+            # Create appropriate command based on type
+            if operation_type == 'brightness':
+                factor = data.get('value', 1.0)
+                command = BrightnessCommand(factor, current_image)
+            elif operation_type == 'rotation':
+                angle = data.get('angle', 0)
+                command = RotationCommand(angle, current_image)
+            elif operation_type == 'grayscale':
+                command = GrayscaleCommand(current_image)
+            elif operation_type == 'crop':
+                box = data.get('crop_box')
+                command = CropCommand(box, current_image)
+            elif operation_type == 'resize':
+                new_size = data.get('new_size')
+                command = ResizeCommand(new_size, current_image)
+            else:
+                # Generic custom operation
+                from models.command import CustomCommand
+                modified_image = data.get('modified_image')
+                if modified_image is None:
+                    return
+                # Use lambda to create the operation
+                execute_func = lambda img: modified_image.copy()
+                undo_func = lambda img: current_image.copy()
+                command = CustomCommand(execute_func, undo_func, description)
+            
+            # Execute the command
+            result = self.image_state.execute_command(command)
+            
+            if result:
+                self.event_bus.publish("image_modified", {'image': result})
+                self.event_bus.publish("undo_available", {'available': self.image_state.can_undo()})
+                self.event_bus.publish("redo_available", {'available': self.image_state.can_redo()})
+        except Exception as e:
+            messagebox.showerror("Error", f"Unable to apply operation: {e}")
+            self.event_bus.publish("redo_available", {'available': self.image_state.can_redo()})
         except Exception as e:
             messagebox.showerror("Error", f"Unable to apply operation: {e}")
