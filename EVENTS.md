@@ -28,11 +28,6 @@
 | `edit_brightness_changed` | Brightness slider/entry | `{'value': float}` | Brightness factor (0.0 - 2.0) |
 | `edit_rotation_changed` | Rotation slider/entry | `{'value': float}` | Rotation angle in degrees (-180 to 180) |
 
-### Image Popups (`edit_popup.py`, `crop_popup.py`)
-| Event | Publisher | Data Parameters | Description |
-|-------|-----------|-----------------|-------------|
-| `image_operation_applied` | Apply button in popup | `Image.Image` | Modified PIL Image object |
-
 ### Image Controller (`image_controller.py`)
 | Event | Publisher | Data Parameters | Description |
 |-------|-----------|-----------------|-------------|
@@ -144,4 +139,3 @@ These events are published but have no subscribers (future features):
 - `panel_order_changed` - Panel reordering not yet implemented
 
 **Implemented but data structure may need refinement:**
-- `image_operation_applied` - Expects `data['modified_image']` but popups may pass Image directly
