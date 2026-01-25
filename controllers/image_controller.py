@@ -80,7 +80,10 @@ class ImageController:
         
         if image:
             self.event_bus.publish("image_modified", {'image': image})
-            self.event_bus.publish("redo_available", {'available': True})
+
+            # Notify that redo is available
+            if self.image_state.can_redo():
+                self.event_bus.publish("redo_available", {'available': True})
         else:
             messagebox.showinfo("Info", "Nothing to undo")
     
@@ -90,7 +93,10 @@ class ImageController:
         
         if image:
             self.event_bus.publish("image_modified", {'image': image})
-            self.event_bus.publish("undo_available", {'available': True})
+            
+            # Notify that undo is available
+            if self.image_state.can_undo():
+                self.event_bus.publish("undo_available", {'available': True})
         else:
             messagebox.showinfo("Info", "Nothing to redo")
     
