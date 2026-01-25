@@ -37,7 +37,9 @@
 | Event | Publisher | Data Parameters | Description |
 |-------|-----------|-----------------|-------------|
 | `image_loaded` | Import handler | `{'image': Image.Image}` | Successfully loaded PIL Image |
-| `image_modified` | Operation handler | `{'image': Image.Image}` | Modified PIL Image |
+| `image_modified` | Operation/undo/redo handler | `{'image': Image.Image}` | Modified PIL Image |
+| `undo_available` | Redo handler | `{'available': bool}` | Undo operation is available |
+| `redo_available` | Undo handler | `{'available': bool}` | Redo operation is available |
 
 ### Workspace (`workspace.py`)
 | Event | Publisher | Data Parameters | Description |
@@ -58,8 +60,8 @@
 |-------|---------|-----------|--------|
 | `image_loaded` | `_on_image_loaded()` | `data` (dict) | Enables save/zoom/edit/crop buttons |
 | `image_modified` | `_on_image_modified()` | `data` (dict) | Placeholder for image modification reactions |
-| `undo_available` | `_update_undo_button()` | `available` (bool) | Enables/disables undo button |
-| `redo_available` | `_update_redo_button()` | `available` (bool) | Enables/disables redo button |
+| `undo_available` | `_update_undo_button()` | `data['available']` (bool) | Enables/disables undo button |
+| `redo_available` | `_update_redo_button()` | `data['available']` (bool) | Enables/disables redo button |
 
 ### Photo Viewer (`photo_viewer.py`)
 | Event | Handler | Data Used | Action |
@@ -83,9 +85,9 @@
 |-------|---------|-----------|--------|
 | `import_requested` | `_handle_import()` | `None` | Opens file dialog, loads image, publishes `image_loaded` |
 | `save_requested` | `_handle_save()` | `None` | Saves current image to file |
-| `undo_requested` | `_handle_undo()` | `None` | Reverts to previous state, publishes `image_modified` |
-| `redo_requested` | `_handle_redo()` | `None` | Reapplies undone state, publishes `image_modified` |
-| `image_operation_applied` | `_handle_operation()` | `modified_image` (Image) | Saves operation, publishes `image_modified` |
+| `undo_requested` | `_handle_undo()` | `None` | Reverts to previous state, publishes `image_modified` and `redo_available` |
+| `redo_requested` | `_handle_redo()` | `None` | Reapplies undone state, publishes `image_modified` and `undo_available` |
+| `image_operation_applied` | `_handle_operation()` | `data['modified_image']` (Image) | Saves operation, publishes `image_modified` |
 
 ---
 
@@ -137,8 +139,9 @@ Updates display at new zoom level
 
 These events are published but have no subscribers (future features):
 - `menu_requested` - Main menu functionality not yet implemented
-- `undo_available` - Undo/redo state tracking not yet published
-- `redo_available` - Undo/redo state tracking not yet published
 - `restart_requested` - Restart functionality not yet implemented
 - `show_message` - Message display system not yet implemented
 - `panel_order_changed` - Panel reordering not yet implemented
+
+**Implemented but data structure may need refinement:**
+- `image_operation_applied` - Expects `data['modified_image']` but popups may pass Image directly
