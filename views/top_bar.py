@@ -15,7 +15,6 @@ class TopBar(ctk.CTkFrame):
         self._create_action_buttons()
         self._create_file_buttons()
         self._create_zoom_buttons()
-        self._create_edit_buttons()
         self._create_search_bar()
         
         # Abonnements aux événements
@@ -238,8 +237,6 @@ class TopBar(ctk.CTkFrame):
         self.save_btn.configure(state="normal")
         self.zoom_out_btn.configure(state="normal")
         self.zoom_in_btn.configure(state="normal")
-        self.edit_btn.configure(state="normal")
-        self.crop_btn.configure(state="normal")
     
     def _on_image_modified(self, data: dict = None):
         """Réagit à la modification d'image."""
