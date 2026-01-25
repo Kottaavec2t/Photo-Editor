@@ -113,33 +113,6 @@ class TopBar(ctk.CTkFrame):
         )
         self.zoom_in_btn.grid(row=0, column=1, padx=2)
     
-    def _create_edit_buttons(self):
-        """Boutons Edit/Crop."""
-        edit_frame = ctk.CTkFrame(self, fg_color="transparent")
-        edit_frame.pack(side=ctk.LEFT, padx=5, pady=5)
-        
-        self.edit_btn = ctk.CTkButton(
-            edit_frame,
-            text="✏️",
-            width=30,
-            height=30,
-            fg_color="transparent",
-            command=self._on_edit_click,
-            state="disabled"
-        )
-        self.edit_btn.grid(row=0, column=0, padx=2)
-        
-        self.crop_btn = ctk.CTkButton(
-            edit_frame,
-            text="✂️",
-            width=30,
-            height=30,
-            fg_color="transparent",
-            command=self._on_crop_click,
-            state="disabled"
-        )
-        self.crop_btn.grid(row=0, column=1, padx=2)
-    
     def _create_search_bar(self):
         """Barre de recherche avec boutons."""
         search_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -212,14 +185,6 @@ class TopBar(ctk.CTkFrame):
     def _on_zoom_click(self, delta: float):
         """Demande un changement de zoom."""
         self.event_bus.publish("zoom_changed", {'zoom_delta': delta})
-    
-    def _on_edit_click(self):
-        """Ouvre la popup d'édition."""
-        self.event_bus.publish("edit_requested")
-    
-    def _on_crop_click(self):
-        """Ouvre la popup de crop."""
-        self.event_bus.publish("crop_requested")
     
     def _on_search(self):
         """Exécute la recherche ou commande."""
