@@ -15,4 +15,5 @@ class EventBus:
         '''Publish an event to all subscribed callbacks.'''
         if event_type in self._listeners:
             for callback in self._listeners[event_type]:
+                print('publishing event:', event_type, 'with data:', data)
                 callback(data)

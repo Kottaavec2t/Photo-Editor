@@ -94,13 +94,13 @@ class ImageController:
         else:
             messagebox.showinfo("Info", "Nothing to redo")
     
-    def _handle_operation(self, modified_image):
+    def _handle_operation(self, data: dict = None):
         """Apply an operation on the image."""
         try:
             # Save the modified image in the state
-            self.image_state.apply_operation(lambda img: modified_image)
+            self.image_state.apply_operation(lambda img: data['modified_image'])
             
             # Notify the views
-            self.event_bus.publish("image_modified", {'image': modified_image})
+            self.event_bus.publish("image_modified", {'image': data['modified_image']})
         except Exception as e:
             messagebox.showerror("Error", f"Unable to apply operation: {e}")
