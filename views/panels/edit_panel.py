@@ -29,8 +29,8 @@ class EditPanel(BasePanel):
             self.brightness_frame,
             textvariable=self.brightness_value_var
         )
-        self.brightness_value_entry.bind("<FocusOut>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e))
-        self.brightness_value_entry.bind("<Return>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e))
+        self.brightness_value_entry.bind("<FocusOut>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, changed=True))
+        self.brightness_value_entry.bind("<Return>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, changed=True))
         self.brightness_value_entry.pack(side=ctk.LEFT, padx=10, pady=10)
 
         self.brightness_slider = ctk.CTkSlider(self.brightness_frame, from_=0, to=2, number_of_steps=200)
@@ -49,8 +49,8 @@ class EditPanel(BasePanel):
             self.rotation_frame,
             textvariable=self.rotation_value_var
         )
-        self.rotation_value_entry.bind("<FocusOut>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e))
-        self.rotation_value_entry.bind("<Return>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e))
+        self.rotation_value_entry.bind("<FocusOut>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, changed=True))
+        self.rotation_value_entry.bind("<Return>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, changed=True))
         self.rotation_value_entry.pack(side=ctk.LEFT, padx=10, pady=10)
 
         self.rotation_slider = ctk.CTkSlider(self.rotation_frame, from_=-180, to=180, number_of_steps=360)
