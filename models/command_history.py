@@ -52,15 +52,21 @@ class CommandHistory:
         if self._current_group is not None:
             self._current_group.add_command(command)
         else:
-            # Smart replacement: if last command is same type, replace it
+            # Smart replacement: if a command of same type exists, replace it
             if self._smart_replace and self._should_replace(command):
-                replaced = self._undo_stack.pop()
-                command_type = type(replaced).__name__
+                command_type = type(command).__name__
                 
-                # Store the replaced command in history
-                if command_type not in self._replaced_commands:
-                    self._replaced_commands[command_type] = []
-                self._replaced_commands[command_type].append(replaced)
+                # Find and remove the previous command of the same type
+                for i in range(len(self._undo_stack) - 1, -1, -1):
+                    existing_cmd = self._undo_stack[i]
+                    if type(existing_cmd).__name__ == command_type:
+                        # Found it! Remove and store it
+                        replaced = self._undo_stack.pop(i)
+                        
+                        if command_type not in self._replaced_commands:
+                            self._replaced_commands[command_type] = []
+                        self._replaced_commands[command_type].append(replaced)
+                        break
             
             self._undo_stack.append(command)
             self._redo_stack.clear()
