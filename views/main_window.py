@@ -1,23 +1,25 @@
 import customtkinter as ctk
 from controllers.event_bus import EventBus
 from models.settings import SettingsManager
+from models.icons import IconManager
 from views.top_bar import TopBar
 from views.workspace import Workspace
 
 class MainWindow(ctk.CTk):
     ''' Main Application Class. '''
 
-    def __init__(self, event_bus: EventBus, settings: SettingsManager):
+    def __init__(self, event_bus: EventBus, settings: SettingsManager, icons: IconManager):
         super().__init__()
 
         self.event_bus = event_bus
         self.settings = settings
+        self.icons = icons
 
         # Window configuration
         self.title("Photo Editor")
         self._setup_ui()
 
-        self.top_bar = TopBar(self, event_bus)
+        self.top_bar = TopBar(self, event_bus, settings, icons)
         self.workspace = Workspace(self, event_bus, settings)
 
         self.top_bar.pack(fill=ctk.X, padx=5, pady=(5, 0))

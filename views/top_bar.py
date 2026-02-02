@@ -1,13 +1,17 @@
 """Barre d'outils supérieure complète."""
 import customtkinter as ctk
 from controllers.event_bus import EventBus
+from models.icons import IconManager
+from models.settings import SettingsManager
 
 class TopBar(ctk.CTkFrame):
     """Barre d'outils complète avec tous les widgets."""
     
-    def __init__(self, master, event_bus: EventBus):
+    def __init__(self, master, event_bus: EventBus, settings: SettingsManager, icons: IconManager):
         super().__init__(master)
         self.event_bus = event_bus
+        self.settings = settings
+        self.icons = icons
         self.configure(height=40)
         
         # Création de tous les widgets
@@ -21,10 +25,13 @@ class TopBar(ctk.CTkFrame):
         self._setup_subscriptions()
     
     def _create_menu_button(self):
-        """Bouton menu avec 3 lignes horizontales."""
+        '''
+        Bouton menu avec 3 lignes horizontales
+        '''
         self.menu_btn = ctk.CTkButton(
             self,
-            text="☰",
+            text='',
+            image=self.icons.get('menu'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -33,13 +40,16 @@ class TopBar(ctk.CTkFrame):
         self.menu_btn.pack(side=ctk.LEFT, padx=5, pady=5)
     
     def _create_action_buttons(self):
-        """Boutons Undo/Redo."""
+        '''
+        Boutons Undo/Redo
+        '''
         action_frame = ctk.CTkFrame(self, fg_color="transparent")
         action_frame.pack(side=ctk.LEFT, padx=5, pady=5)
         
         self.undo_btn = ctk.CTkButton(
             action_frame,
-            text="↶",
+            text='',
+            image=self.icons.get('undo'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -50,7 +60,8 @@ class TopBar(ctk.CTkFrame):
         
         self.redo_btn = ctk.CTkButton(
             action_frame,
-            text="↷",
+            text='',
+            image=self.icons.get('redo'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -66,7 +77,8 @@ class TopBar(ctk.CTkFrame):
         
         self.import_btn = ctk.CTkButton(
             file_frame,
-            text="📂",
+            text='',
+            image=self.icons.get('open-folder'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -76,7 +88,8 @@ class TopBar(ctk.CTkFrame):
         
         self.save_btn = ctk.CTkButton(
             file_frame,
-            text="💾",
+            text='',
+            image=self.icons.get('save'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -92,7 +105,8 @@ class TopBar(ctk.CTkFrame):
         
         self.zoom_out_btn = ctk.CTkButton(
             zoom_frame,
-            text="🔍+",
+            text='',
+            image=self.icons.get('zoom-out'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -103,7 +117,8 @@ class TopBar(ctk.CTkFrame):
         
         self.zoom_in_btn = ctk.CTkButton(
             zoom_frame,
-            text="🔍-",
+            text='',
+            image=self.icons.get('zoom-in'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -133,7 +148,8 @@ class TopBar(ctk.CTkFrame):
         # Bouton Clear
         self.clear_btn = ctk.CTkButton(
             search_frame,
-            text="✕",
+            text='',
+            image=self.icons.get('cross'),
             width=30,
             height=30,
             fg_color="transparent",
@@ -144,7 +160,8 @@ class TopBar(ctk.CTkFrame):
         # Bouton Search
         self.search_btn = ctk.CTkButton(
             search_frame,
-            text="🔍",
+            text='',
+            image=self.icons.get('search'),
             width=30,
             height=30,
             fg_color="transparent",
