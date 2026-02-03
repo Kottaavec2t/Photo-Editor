@@ -5,6 +5,7 @@ from typing import Any, Optional
 from dataclasses import dataclass, asdict, field
 from PIL import Image, ImageTk
 import customtkinter as ctk
+from utils.text_operations import remove_file_extension
 
 class IconManager:
     def __init__(self, filepath: str = 'images'):
@@ -24,7 +25,7 @@ class IconManager:
             dark_path = os.path.join(self._dark_fp, img) # dark icon
             light_path = os.path.join(self._light_fp, img) # light icon
             print(f"Loading icon: {img}")
-            name = img[:-4] # remove the .png extension
+            name = remove_file_extension(img, '.png') # remove the .png extension
             self._icons[name] = ctk.CTkImage(Image.open(light_path), Image.open(dark_path))
 
     def get(self, name: str) -> ctk.CTkImage | None:
