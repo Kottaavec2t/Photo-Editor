@@ -10,9 +10,7 @@ def remove_file_extension(fname: str, fextension: str = None) -> str:
     :rtype: str
     '''
     if not fextension:
-        index = 0
-        for char in fname:
-            index += 1
+        for i, char in enumerate(fname):
             if char == '.':
-                return fname[:-index]
+                return fname[:-i]
     return fname[:-len(fextension)]
