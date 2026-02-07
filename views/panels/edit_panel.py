@@ -4,11 +4,12 @@ from utils.validators import validate_numeric_input, validate_type
 from utils.number_operations import clamp, round_number
 
 class EditPanel(BasePanel):
-    ''' Panneau d'édition des photos. '''
-
+    '''
+    Panel for Image editing entrys
+    '''
     def __init__(self, master, event_bus):
         super().__init__(master, event_bus)
-        self.event_bus = event_bus
+        self._event_bus = event_bus
         self._slider_timers = {}  # Dict pour stocker les timers par slider
         self._setup_ui()
 
@@ -29,13 +30,13 @@ class EditPanel(BasePanel):
             self.brightness_frame,
             textvariable=self.brightness_value_var
         )
-        self.brightness_value_entry.bind("<FocusOut>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, changed=True))
-        self.brightness_value_entry.bind("<Return>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, changed=True))
+        self.brightness_value_entry.bind("<FocusOut>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, save=True))
+        self.brightness_value_entry.bind("<Return>", lambda e: self._brightness_changed(self.brightness_value_var.get(), event=e, save=True))
         self.brightness_value_entry.pack(side=ctk.LEFT, padx=10, pady=10)
 
         self.brightness_slider = ctk.CTkSlider(self.brightness_frame, from_=0, to=2, number_of_steps=200)
         self.brightness_slider.configure(command=self._brightness_changed)
-        self.brightness_slider.bind("<ButtonRelease-1>", lambda e:self._brightness_changed(e, changed=True))
+        self.brightness_slider.bind("<ButtonRelease-1>", lambda e:self._brightness_changed(e, save=True))
         self.brightness_slider.pack(side=ctk.LEFT, padx=10, pady=10)
 
         # --[[ ROTATION ]]--
@@ -49,21 +50,29 @@ class EditPanel(BasePanel):
             self.rotation_frame,
             textvariable=self.rotation_value_var
         )
-        self.rotation_value_entry.bind("<FocusOut>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, changed=True))
-        self.rotation_value_entry.bind("<Return>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, changed=True))
+        self.rotation_value_entry.bind("<FocusOut>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, save=True))
+        self.rotation_value_entry.bind("<Return>", lambda e: self._rotation_changed(self.rotation_value_var.get(), event=e, save=True))
         self.rotation_value_entry.pack(side=ctk.LEFT, padx=10, pady=10)
 
         self.rotation_slider = ctk.CTkSlider(self.rotation_frame, from_=-180, to=180, number_of_steps=360)
         self.rotation_slider.configure(command=self._rotation_changed)
-        self.rotation_slider.bind("<ButtonRelease-1>", lambda e:self._rotation_changed(e, changed=True))
+        self.rotation_slider.bind("<ButtonRelease-1>", lambda e:self._rotation_changed(e, save=True))
         self.rotation_slider.pack(side=ctk.LEFT, padx=10, pady=10)
 
 
-    def _brightness_changed(self, value=None, event=None, changed=False):
-        ''' Handle brightness change events.
-            Called either by slider or by entry validate.
-            Rounds, validates, clamps and syncs both indicators.
-            Publishes event only when changed=True (on ButtonRelease).
+    def _brightness_changed(self, value: float|str = None, event = None, save: bool = False):
+        '''
+        Handle brightness change events
+        Called either by slider or by entry validate
+        Rounds, validates, clamps and syncs both indicators
+        Publishes event with bool save (True on ButtonRelease else False)
+
+        :param value: The new value
+        :type value: float | str, optional
+        :param event: Event gived by CtkWidget
+        :type event: any, optional
+        :param save: If True save in history else not
+        :type save: bool, optional
         '''
         # guard: called early during widget init — bail out safely
         if not hasattr(self, "brightness_value_entry") or not hasattr(self, "brightness_slider"):
@@ -94,14 +103,21 @@ class EditPanel(BasePanel):
         self.brightness_value_var.set(str(value))
         self.brightness_slider.set(value)
 
-        if changed:
-            self.event_bus.publish("image_operation_applied", {"value": value, "operation_type": "brightness"})
+        self._event_bus.publish("image_operation_applied", {'value': value, 'operation_type': "brightness", 'save': save})
 
-    def _rotation_changed(self, value=None, event=None, changed=False):
-        ''' Handle rotation change events.
-            Called either by slider or by entry validate.
-            Rounds, validates, clamps and syncs both indicators.
-            Publishes event only when changed=True (on ButtonRelease).
+    def _rotation_changed(self, value: float|str = None, event = None, save: bool = False):
+        ''' 
+        Handle rotation change events
+        Called either by slider or by entry validate
+        Rounds, validates, clamps and syncs both indicators
+        Publishes event with bool save (True on ButtonRelease else False)
+            
+        :param value: The new value
+        :type value: float | str, optional
+        :param event: Event gived by CtkWidget
+        :type event: any, optional
+        :param save: If True save in history else not
+        :type save: bool, optional
         '''
         # guard: called early during widget init — bail out safely
         if not hasattr(self, "rotation_value_entry") or not hasattr(self, "rotation_slider"):
@@ -132,6 +148,5 @@ class EditPanel(BasePanel):
         self.rotation_value_var.set(str(value))
         self.rotation_slider.set(value)
 
-        if changed:
-            self.event_bus.publish("image_operation_applied", {"angle": value, "operation_type": "rotation"})
+        self._event_bus.publish("image_operation_applied", {'angle': value, 'operation_type': "rotation", 'save': save})
     

@@ -1,13 +1,19 @@
 """Point d'entrée de l'application Photo Editor."""
 from views.main_window import MainWindow
-from controllers.image_controller import ImageController
-from controllers.event_bus import EventBus
-from models.image_state import ImageStateManager
-from models.icons import IconManager
-from models.settings import SettingsManager
+from controllers import (
+    ImageController, 
+    EventBus,
+)
+from models import (
+    ImageStateManager, 
+    IconManager, 
+    SettingsManager,
+)
 
 def main():
-    """Lance l'application."""
+    '''
+    Start application
+    '''
     # Initialisation des composants centraux
     event_bus = EventBus()
     image_state = ImageStateManager()
