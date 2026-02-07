@@ -1,12 +1,12 @@
 def round_number(n: float, decimals: int = 2) -> float:
     '''
-    Round a number to a specified number of decimal places
-    
-    :param n: a number
+    Round a number to a specified number of decimal places.
+
+    :param n: A number.
     :type n: float
-    :param decimals: the numbers of decimals after the comma
+    :param decimals: The numbers of decimals after the comma.
     :type decimals: int
-    :return: rounded number
+    :return: The rounded number.
     :rtype: float
     '''
     try:
@@ -16,15 +16,15 @@ def round_number(n: float, decimals: int = 2) -> float:
 
 def clamp(n: float, min_val: float, max_val: float) -> float:
     '''
-    Clamp the number between min_val and max_val
-    
-    :param n: a number
+    Clamp the number between min_val and max_val.
+
+    :param n: A number.
     :type n: float
-    :param min_val: minimum value
+    :param min_val: The minimum value.
     :type min_val: float
-    :param max_val: maximum value
+    :param max_val: The maximum value.
     :type max_val: float
-    :return: n | min_val | max_val
+    :return: n | min_val | max_val.
     :rtype: float
     '''
     return max(min_val, min(max_val, n))

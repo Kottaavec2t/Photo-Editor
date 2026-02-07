@@ -1,12 +1,12 @@
 def remove_file_extension(fname: str, fextension: str = None) -> str:
     '''
-    Remove the extension of the given filename
-    
-    :param fname: the name of the file
+    Remove the extension of the given filename.
+
+    :param fname: The name of the file.
     :type fname: str
-    :param fextension: the extension of the file
+    :param fextension: The extension of the file.
     :type fextension: str
-    :return: the filename without the extension
+    :return: The filename without the extension.
     :rtype: str
     '''
     if not fextension:

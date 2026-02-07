@@ -1,8 +1,13 @@
 from tkinter import filedialog
 from PIL import Image
 
-def save_image_as(image: Image.Image):
-    '''Opens a file dialog to save the given image with user-specified name and format.'''
+def save_image_as(image: Image.Image) -> None:
+    '''
+    Opens a file dialog to save the given image with user-specified name and format.
+
+    :param image: The image to save as.
+    :type image: Image.Image
+    '''
     filestypes = [
             ("Joint Photographic Experts Group", "*.jpeg; *.jpg"),
             ("Portable Network Graphic", "*.png"),
@@ -12,8 +17,13 @@ def save_image_as(image: Image.Image):
         return
     image.save(fp=fp)
 
-def save_text_as(text: str):
-    '''Opens a file dialog to save the given text with user-specified name.'''
+def save_text_as(text: str) -> None:
+    '''
+    Opens a file dialog to save the given text with user-specified name.
+
+    :param text: The text to save as.
+    :type text: str
+    '''
     filestypes = [
             ("Text File", "*.txt"),
             ]
