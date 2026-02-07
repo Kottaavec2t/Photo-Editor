@@ -15,7 +15,6 @@ class TopBar(ctk.CTkFrame):
         self.configure(height=40)
         
         # Création de tous les widgets
-        self._create_menu_button()
         self._create_action_buttons()
         self._create_file_buttons()
         self._create_zoom_buttons()
@@ -23,21 +22,6 @@ class TopBar(ctk.CTkFrame):
         
         # Abonnements aux événements
         self._setup_subscriptions()
-    
-    def _create_menu_button(self):
-        '''
-        Bouton menu avec 3 lignes horizontales
-        '''
-        self.menu_btn = ctk.CTkButton(
-            self,
-            text='',
-            image=self.icons.get('menu'),
-            width=30,
-            height=30,
-            fg_color="transparent",
-            command=self._on_menu_click
-        )
-        self.menu_btn.pack(side=ctk.LEFT, padx=5, pady=5)
     
     def _create_action_buttons(self):
         '''
@@ -177,10 +161,6 @@ class TopBar(ctk.CTkFrame):
         self.event_bus.subscribe("redo_available", self._update_redo_button)
     
     # --[[ Gestionnaire de clics ]]--
-    
-    def _on_menu_click(self):
-        """Ouvre le menu principal."""
-        self.event_bus.publish("menu_requested")
     
     def _on_undo_click(self):
         """Demande l'annulation."""
