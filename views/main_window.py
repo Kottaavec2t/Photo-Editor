@@ -1,37 +1,45 @@
 import customtkinter as ctk
-from controllers.event_bus import EventBus
-from models.settings import SettingsManager
-from models.icons import IconManager
-from views.top_bar import TopBar
-from views.workspace import Workspace
+from controllers import EventBus
+from models import (
+    SettingsManager, 
+    IconManager,
+)
+from views import (
+    TopBar,
+    Workspace,
+)
 
 class MainWindow(ctk.CTk):
-    ''' Main Application Class. '''
+    '''
+    Main Application Class.
 
-    def __init__(self, event_bus: EventBus, settings: SettingsManager, icons: IconManager):
+    :param event_bus: The global event_bus to communicate with others scripts.
+    :type event_bus: EventBus
+    :param settings: The global settings manager to access settings from nowhere.
+    :type settings: SettingsManager
+    :param icons: The global icons manager to access icons from nowhere.
+    :type icons: IconManager
+    '''
+    def __init__(self, event_bus: EventBus, settings: SettingsManager, icons: IconManager) -> None:
         super().__init__()
 
-        self.event_bus = event_bus
-        self.settings = settings
-        self.icons = icons
+        self._event_bus = event_bus
+        self._settings = settings
+        self._icons = icons
 
-        # Window configuration
+        self._top_bar = TopBar(self, event_bus, settings, icons)
+        self._workspace = Workspace(self, event_bus, settings)
+
         self.title("Photo Editor")
         self._setup_ui()
-
-        self.top_bar = TopBar(self, event_bus, settings, icons)
-        self.workspace = Workspace(self, event_bus, settings)
-
-        self.top_bar.pack(fill=ctk.X, padx=5, pady=(5, 0))
-        self.workspace.pack(fill=ctk.BOTH, expand=True, padx=5, pady=5)
-
         self._setup_bindings()
-        
         self.after(100, self._load_settings)
 
-    def _setup_ui(self):
-        ''' Setup the UI components. '''
-        settings = self.settings.get_all()
+    def _setup_ui(self) -> None:
+        '''
+        Setup UI components.
+        '''
+        settings = self._settings.get_all()
         ctk.set_appearance_mode(settings.appearance)
         ctk.set_default_color_theme(settings.color_theme)
         
@@ -39,34 +47,40 @@ class MainWindow(ctk.CTk):
             self.geometry(settings.geometry)
         else:
             self.geometry("800x600")
-    
-    def _setup_bindings(self):
-        ''' Setup event bindings. '''
+
+        self._top_bar.pack(fill=ctk.X, padx=5, pady=(5, 0))
+        self._workspace.pack(fill=ctk.BOTH, expand=True, padx=5, pady=5)
+
+    def _setup_bindings(self) -> None:
+        '''
+        Setup event bindings.
+        '''
         self.protocol("WM_DELETE_WINDOW", self._on_closing)
-        self.bind("<F11>", lambda e: self._toggle_fullscreen())
+        self.bind("<F11>", self._toggle_fullscreen())
         self.bind_all("<Button-1>", lambda e: e.widget.focus_set())
-        
-    def _load_settings(self):
-        ''' Load settings from the settings.json file. '''
-        if self.settings.get("fullscreen"): 
-            self.state("zoomed")
-    
-    def _on_closing(self):
-        ''' Save settings and close the app. '''
-        # Save window state/geometry
+
+    def _load_settings(self) -> None:
+        '''
+        Load settings.
+        '''
+        if self._settings.get("fullscreen"): self.state("zoomed")
+
+    def _on_closing(self) -> None:
+        '''
+        Save settings and close the app.
+        '''
         if self.state() == 'zoomed':
-            self.settings.set("fullscreen", True)
-            self.settings.set("geometry", None)
+            self._settings.set("fullscreen", True)
+            self._settings.set("geometry", None)
         else:
-            self.settings.set("fullscreen", False)
-            self.settings.set("geometry", self.geometry())
+            self._settings.set("fullscreen", False)
+            self._settings.set("geometry", self.geometry())
         
-        self.settings.save()
+        self._settings.save()
         self.destroy()
 
-    def _toggle_fullscreen(self):
-        ''' Toggle fullscreen mode. '''
-        if self.state() == 'normal':
-            self.state('zoomed')
-        else:
-            self.state('normal')
+    def _toggle_fullscreen(self) -> None:
+        '''
+        Toggle fullscreen.
+        '''
+        self.state('zoomed') if self.state() == 'normal' else self.state('normal')

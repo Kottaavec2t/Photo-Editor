@@ -1,20 +1,25 @@
 import customtkinter as ctk
-from views.panels.base_panel import BasePanel
+from views.panels import BasePanel
+from controllers import EventBus
 from utils.validators import validate_numeric_input, validate_type
 from utils.number_operations import clamp, round_number
 
 class EditPanel(BasePanel):
     '''
-    Panel for Image editing entrys
+    Panel for Image editing entrys.
+
+    :param event_bus: The global event_bus to communicate with others scripts.
+    :type event_bus: EventBus
     '''
-    def __init__(self, master, event_bus):
+    def __init__(self, master, event_bus: EventBus) -> None:
         super().__init__(master, event_bus)
         self._event_bus = event_bus
-        self._slider_timers = {}  # Dict pour stocker les timers par slider
         self._setup_ui()
 
-    def _setup_ui(self):
-        ''' Setup the UI components of the edit panel. '''
+    def _setup_ui(self) -> None:
+        '''
+        Setup the UI components of the edit panel.
+        '''
         self.label = ctk.CTkLabel(self, text="Edit Panel")
         self.label.pack(side=ctk.TOP, padx=5, pady=5)
 
@@ -59,19 +64,18 @@ class EditPanel(BasePanel):
         self.rotation_slider.bind("<ButtonRelease-1>", lambda e:self._rotation_changed(e, save=True))
         self.rotation_slider.pack(side=ctk.LEFT, padx=10, pady=10)
 
-
-    def _brightness_changed(self, value: float|str = None, event = None, save: bool = False):
+    def _brightness_changed(self, value: float|str = None, event = None, save: bool = False) -> None:
         '''
-        Handle brightness change events
-        Called either by slider or by entry validate
-        Rounds, validates, clamps and syncs both indicators
-        Publishes event with bool save (True on ButtonRelease else False)
+        Handle brightness change events.
+        Called either by slider or by entry validate.
+        Rounds, validates, clamps and syncs both indicators.
+        Publishes event with bool save (True on ButtonRelease else False).
 
-        :param value: The new value
+        :param value: The new value.
         :type value: float | str, optional
-        :param event: Event gived by CtkWidget
+        :param event: Event gived by CtkWidget.
         :type event: any, optional
-        :param save: If True save in history else not
+        :param save: If True save in history else not.
         :type save: bool, optional
         '''
         # guard: called early during widget init — bail out safely
@@ -105,18 +109,18 @@ class EditPanel(BasePanel):
 
         self._event_bus.publish("image_operation_applied", {'value': value, 'operation_type': "brightness", 'save': save})
 
-    def _rotation_changed(self, value: float|str = None, event = None, save: bool = False):
+    def _rotation_changed(self, value: float|str = None, event = None, save: bool = False) -> None:
         ''' 
-        Handle rotation change events
-        Called either by slider or by entry validate
-        Rounds, validates, clamps and syncs both indicators
-        Publishes event with bool save (True on ButtonRelease else False)
+        Handle rotation change events.
+        Called either by slider or by entry validate.
+        Rounds, validates, clamps and syncs both indicators.
+        Publishes event with bool save (True on ButtonRelease else False).
             
-        :param value: The new value
+        :param value: The new value.
         :type value: float | str, optional
-        :param event: Event gived by CtkWidget
+        :param event: Event gived by CtkWidget.
         :type event: any, optional
-        :param save: If True save in history else not
+        :param save: If True save in history else not.
         :type save: bool, optional
         '''
         # guard: called early during widget init — bail out safely
@@ -149,4 +153,3 @@ class EditPanel(BasePanel):
         self.rotation_slider.set(value)
 
         self._event_bus.publish("image_operation_applied", {'angle': value, 'operation_type': "rotation", 'save': save})
-    

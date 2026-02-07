@@ -1,7 +1,9 @@
 import customtkinter as ctk
-from controllers.event_bus import EventBus
-from models.icons import IconManager
-from models.settings import SettingsManager
+from controllers import EventBus
+from models import (
+    IconManager, 
+    SettingsManager,
+)
 
 class TopBar(ctk.CTkFrame):
     '''
@@ -14,7 +16,7 @@ class TopBar(ctk.CTkFrame):
     :param icons: The global icons manager to access icons from nowhere.
     :type icons: IconManager
     '''
-    def __init__(self, master, event_bus: EventBus, settings: SettingsManager, icons: IconManager):
+    def __init__(self, master, event_bus: EventBus, settings: SettingsManager, icons: IconManager) -> None:
         super().__init__(master)
         self._event_bus = event_bus
         self._settings = settings
@@ -29,8 +31,8 @@ class TopBar(ctk.CTkFrame):
         
         # Events Subscribing
         self._setup_subscriptions()
-    
-    def _create_action_buttons(self):
+
+    def _create_action_buttons(self) -> None:
         '''
         Undo/Redo buttons.
         '''
@@ -60,8 +62,8 @@ class TopBar(ctk.CTkFrame):
             state="disabled"
         )
         self.redo_btn.grid(row=0, column=1, padx=2)
-    
-    def _create_file_buttons(self):
+
+    def _create_file_buttons(self) -> None:
         '''
         Import/Save buttons.
         '''
@@ -90,8 +92,8 @@ class TopBar(ctk.CTkFrame):
             state="disabled"
         )
         self.save_btn.grid(row=0, column=1, padx=2)
-    
-    def _create_zoom_buttons(self):
+
+    def _create_zoom_buttons(self) -> None:
         '''
         Zoom In/Out buttons.
         '''
@@ -121,8 +123,8 @@ class TopBar(ctk.CTkFrame):
             state="disabled"
         )
         self.zoom_in_btn.grid(row=0, column=1, padx=2)
-    
-    def _create_search_bar(self):
+
+    def _create_search_bar(self) -> None:
         '''
         Searchbar with buttons.
         '''
@@ -165,8 +167,8 @@ class TopBar(ctk.CTkFrame):
             command=self._on_search
         )
         self.search_btn.grid(row=0, column=2, padx=2)
-    
-    def _setup_subscriptions(self):
+
+    def _setup_subscriptions(self) -> None:
         '''
         Subscribe to events.
         '''
@@ -174,32 +176,32 @@ class TopBar(ctk.CTkFrame):
         self._event_bus.subscribe("image_modified", self._on_image_modified)
         self._event_bus.subscribe("undo_available", self._update_undo_button)
         self._event_bus.subscribe("redo_available", self._update_redo_button)
-    
-    def _on_undo_click(self):
+
+    def _on_undo_click(self) -> None:
         '''
         Ask undo.
         '''
         self._event_bus.publish("undo_requested")
-    
-    def _on_redo_click(self):
+
+    def _on_redo_click(self) -> None:
         '''
         Ask redo.
         '''
         self._event_bus.publish("redo_requested")
-    
-    def _on_import_click(self):
+
+    def _on_import_click(self) -> None:
         '''
         Ask for image import.
         '''
         self._event_bus.publish("import_requested")
-    
-    def _on_save_click(self):
+
+    def _on_save_click(self) -> None:
         '''
         Ask for image save.
         '''
         self._event_bus.publish("save_requested")
-    
-    def _on_zoom_click(self, delta: float):
+
+    def _on_zoom_click(self, delta: float) -> None:
         '''
         Ask for image zoom.
 
@@ -207,8 +209,8 @@ class TopBar(ctk.CTkFrame):
         :type delta: float
         '''
         self._event_bus.publish("zoom_changed", {'zoom_delta': delta})
-    
-    def _on_search(self):
+
+    def _on_search(self) -> None:
         '''
         Manage search bar entrys.
         '''
@@ -223,14 +225,14 @@ class TopBar(ctk.CTkFrame):
         else:
             # Recherche normale
             self._event_bus.publish("search_requested", {'query': query})
-    
+
     def _on_clear_search(self):
         '''
         Clear search bar.
         '''
         self.search_entry.delete(0, 'end')
-    
-    def _execute_command(self, command: str):
+
+    def _execute_command(self, command: str) -> None:
         '''
         Execute search command.
 
@@ -255,8 +257,8 @@ class TopBar(ctk.CTkFrame):
         
         # Efface la commande après exécution
         self.search_entry.delete(0, 'end')
-    
-    def _cmd_restart(self, args: list):
+
+    def _cmd_restart(self, args: list) -> None:
         '''
         Restart app.
 
@@ -264,8 +266,8 @@ class TopBar(ctk.CTkFrame):
         :type args: list
         '''
         self._event_bus.publish("restart_requested", {'args': args})
-    
-    def _on_image_loaded(self, data: dict = None):
+
+    def _on_image_loaded(self, data: dict = None) -> None:
         '''
         Enable buttons when image is loaded.
         
@@ -275,8 +277,8 @@ class TopBar(ctk.CTkFrame):
         self.save_btn.configure(state="normal")
         self.zoom_out_btn.configure(state="normal")
         self.zoom_in_btn.configure(state="normal")
-    
-    def _on_image_modified(self, data: dict = None):
+
+    def _on_image_modified(self, data: dict = None) -> None:
         '''
         React to image modification.
         
@@ -284,8 +286,8 @@ class TopBar(ctk.CTkFrame):
         :type data: dict, optional
         '''
         pass
-    
-    def _update_undo_button(self, data: dict = None):
+
+    def _update_undo_button(self, data: dict = None) -> None:
         '''
         Enable/Disable Undo buttons.
         
@@ -296,7 +298,7 @@ class TopBar(ctk.CTkFrame):
         self.undo_btn.configure(state="normal" if available else "disabled")
         # Maybe change color to indicate availability
 
-    def _update_redo_button(self, data: dict = None):
+    def _update_redo_button(self, data: dict = None) -> None:
         '''
         Enable/Disable Redo buttons.
         

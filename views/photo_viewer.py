@@ -1,24 +1,28 @@
-"""Widget d'affichage d'image avec zoom."""
 import customtkinter as ctk
-from PIL import Image, ImageTk
-from controllers.event_bus import EventBus
+from controllers import EventBus
 
 class PhotoViewer(ctk.CTkFrame):
-    """Affiche l'image avec zoom et défilement."""
-    
-    def __init__(self, master, event_bus: EventBus):
+    '''
+    Display image with zoom and movements UBLR.
+
+    :param event_bus: The global event_bus to communicate with others scripts.
+    :type event_bus: EventBus
+    '''
+    def __init__(self, master, event_bus: EventBus) -> None:
         super().__init__(master, fg_color="transparent")
-        self.event_bus = event_bus
-        self.zoom = 1.0
-        self.current_image = None
+        self._event_bus = event_bus
+        self._zoom = 1.0
+        self._current_image = None
         
         self._create_widgets()
         self._setup_bindings() # ! After the widgets are created !
         self._setup_subscriptions()
-    
-    def _create_widgets(self):
-        """Crée le canvas et les scrollbars."""
-        # Scrollbars
+
+    def _create_widgets(self) -> None:
+        '''
+        Create widgets.
+        Canvas + Scrollbars.
+        '''
         self.yscroll = ctk.CTkScrollbar(self, orientation=ctk.VERTICAL)
         self.yscroll.pack(side=ctk.RIGHT, fill=ctk.Y)
         
@@ -37,79 +41,112 @@ class PhotoViewer(ctk.CTkFrame):
         self.yscroll.configure(command=self.canvas.yview)
         self.xscroll.configure(command=self.canvas.xview)
         
-        # Label pour l'image
+        # Label for the image
         self.image_label = ctk.CTkLabel(self.canvas, text="Aucune image")
         self.canvas_window = self.canvas.create_window(
             0, 0,
             window=self.image_label
         )
 
-    def _setup_bindings(self):
-        """Configure les bindings d'événements."""
+    def _setup_bindings(self) -> None:
+        '''
+        Setup event bindings.
+        '''
         self.image_label.bind("<MouseWheel>", self._on_mousewheel)
         self.image_label.bind("<Alt-MouseWheel>", self._on_alt_mousewheel)
         self.image_label.bind("<Control-MouseWheel>", self._on_ctrl_mousewheel)
-    
-    def _setup_subscriptions(self):
-        """S'abonne aux événements du bus."""
-        self.event_bus.subscribe("image_loaded", self._on_image_update)
-        self.event_bus.subscribe("image_modified", self._on_image_update)
-        self.event_bus.subscribe("zoom_changed", self._on_zoom_changed)
-    
-    def _on_image_update(self, data: dict = None):
-        """Met à jour l'affichage avec la nouvelle image."""
+
+    def _setup_subscriptions(self) -> None:
+        '''
+        Subscribe to events.
+        '''
+        self._event_bus.subscribe("image_loaded", self._on_image_update)
+        self._event_bus.subscribe("image_modified", self._on_image_update)
+        self._event_bus.subscribe("zoom_changed", self._on_zoom_changed)
+
+    def _on_image_update(self, data: dict = None) -> None:
+        '''
+        Update display with new image.
+        
+        :param data: Datas from event_bus.
+        :type data: dict, optional
+        '''
         print('test')
-        self.current_image = data['image']
+        self._current_image = data['image']
         self._update_display()
-    
-    def _update_display(self):
-        """Redessine l'image avec le zoom actuel."""
-        if self.current_image is None:
-            return
+
+    def _update_display(self) -> None:
+        '''
+        Resize image with new zoom.
+        '''
+        if self._current_image is None: return
         
-        # Calcul de la taille avec zoom
-        width = int(self.current_image.width * self.zoom)
-        height = int(self.current_image.height * self.zoom)
+        width = int(self._current_image.width * self._zoom)
+        height = int(self._current_image.height * self._zoom)
         
-        # Création de l'image CTk
         ctk_image = ctk.CTkImage(
-            self.current_image,
+            self._current_image,
             size=(width, height)
         )
         self.image_label.configure(image=ctk_image, text="")
 
-        # Centrer l'image dans le canvas
+        # Center image
         self.canvas.update_idletasks()
         self.canvas.coords(self.canvas_window, self.canvas.winfo_width() // 2, self.canvas.winfo_height() // 2)
 
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-    
-    def _on_mousewheel(self, event):
-        """Gère le défilement."""
+
+    def _on_mousewheel(self, event) -> None:
+        '''
+        Manage scrolling with scrollwheel.
+        
+        :param event: Event gived by CtkWidget
+        :type event: any, optional
+        '''
         if self._is_scrollbar_active('y'):
             self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-    
-    def _on_alt_mousewheel(self, event):
-        """Gère le défilement horizontal avec Alt+molette."""
+
+    def _on_alt_mousewheel(self, event) -> None:
+        '''
+        Manage scrolling with alt+scrollwheel.
+
+        :param event: Event gived by CtkWidget
+        :type event: any, optional
+        '''
         if self._is_scrollbar_active('x'):
             self.canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
-    
-    def _on_ctrl_mousewheel(self, event):
-        """Gère le zoom avec Ctrl+molette."""
+
+    def _on_ctrl_mousewheel(self, event) -> None:
+        '''
+        Manage zooming with ctrl+scrollwheel.
+
+        :param event: Event gived by CtkWidget
+        :type event: any, optional
+        '''
         if event.delta > 0:
-            self.event_bus.publish("zoom_changed", {'zoom_delta': 0.1})
+            self._event_bus.publish("zoom_changed", {'zoom_delta': 0.1})
         else:
-            self.event_bus.publish("zoom_changed", {'zoom_delta': -0.1})
-    
-    def _on_zoom_changed(self, data: dict = None):
-        """Applique le changement de zoom."""
-        new_zoom = self.zoom + data['zoom_delta']
+            self._event_bus.publish("zoom_changed", {'zoom_delta': -0.1})
+
+    def _on_zoom_changed(self, data: dict = None) -> None:
+        '''
+        Manage zoom changed.
+        
+        :param data: Datas from event_bus.
+        :type data: dict, optional
+        '''
+        new_zoom = self._zoom + data['zoom_delta']
         if 0.1 <= new_zoom <= 10:
-            self.zoom = new_zoom
+            self._zoom = new_zoom
             self._update_display()
 
     def _is_scrollbar_active(self, axe: str ="x") -> bool:
-        """Vérifie si les scrollbars sont nécessaires (l'image dépasse la taille du canvas)"""
+        '''
+        Check if scrollbars need to be activates (image is too zoomed for the screen).
+
+        :param axe: The axe (x or y) to check scrollbar for.
+        :type axe: str, optional
+        '''
         self.canvas.update_idletasks()
         
         canvas_width = self.canvas.winfo_width()
