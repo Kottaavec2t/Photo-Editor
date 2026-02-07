@@ -1,8 +1,8 @@
-from models.command_history import CommandHistory
-from models.icons import IconManager
-from models.image_state import ImageStateManager
-from models.panel_registry import PanelRegistry
-from models.settings import SettingsManager
+from .command_history import CommandHistory
+from .icons import IconManager
+from .image_state import ImageStateManager
+from .panel_registry import PanelRegistry
+from .settings import SettingsManager
 
 __all__ = [
     'CommandHistory',

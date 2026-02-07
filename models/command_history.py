@@ -16,7 +16,7 @@ class CommandHistory:
     def add_command(self, command: Command) -> None:
         '''
         Add a command to the history.
-        
+
         :param command: The command to add.
         :type command: Command
         '''
@@ -45,7 +45,7 @@ class CommandHistory:
     def can_undo(self) -> bool:
         '''
         Determine if the undo is possible.
-        
+
         :return: True if the undo_stack is not empty else False.
         :rtype: bool
         '''
@@ -54,7 +54,7 @@ class CommandHistory:
     def can_redo(self) -> bool:
         '''
         Determine if the redo is possible.
-        
+
         :return: True if the redo_stack is not empty else False.
         :rtype: bool
         '''
@@ -95,7 +95,7 @@ class CommandHistory:
     def _command_type_in_history(self, command: Command) -> bool:
         '''
         Tells if the command is in the history.
-        
+
         :param command: The command to check.
         :type command: Command
         :return: True if the command is in the history else False.

@@ -15,7 +15,7 @@ class ImageStateManager:
         self._base_image: Image.Image | None = None
         self._current_image: Image.Image | None = None
         self._command_history = CommandHistory(max_history)
-    
+
     def load_image(self, fp: str) -> None:
         '''
         Loads a new image and resets history.
@@ -27,7 +27,7 @@ class ImageStateManager:
         self._base_image = image.copy()
         self._current_image = image.copy()
         self._command_history.clear_history()
-    
+
     def get_current_image(self) -> Image.Image | None:
         '''
         Returns the current image.
@@ -38,12 +38,12 @@ class ImageStateManager:
         if self._current_image is not None:
             return self._current_image.copy()
         return None
-    
+
     def execute_command(self, command: Command, save_in_history: bool = True) -> Image.Image | None:
         '''
         Execute a command.
         If save_in_history is True then command is saved in history.
-        
+
         :param command: The Command to execute.
         :type command: Command
         :param save_in_history: True if the command is save in the history else False.
@@ -61,11 +61,11 @@ class ImageStateManager:
         self._current_image = modified_image # stock the new image
 
         return modified_image
-    
+
     def undo(self) -> Image.Image | None:
         '''
         Undo the last command or transaction.
-        
+
         :return: The resulting image, or None if nothing to undo.
         :rtype: Image.Image | None
         '''
@@ -75,11 +75,11 @@ class ImageStateManager:
             self._current_image = new_image
             return self._current_image.copy()
         return None
-    
+
     def redo(self) -> Image.Image | None:
         '''
         Redo the last undone command or transaction.
-        
+
         :return: The resulting image, or None if nothing to redo.
         :rtype: Image.Image | None
         '''
@@ -89,25 +89,25 @@ class ImageStateManager:
             self._current_image = new_image
             return self._current_image.copy()
         return None
-    
+
     def can_undo(self) -> bool:
         '''
         Determine if the undo is possible.
-        
+
         :return: True if the undo_stack is not empty else False.
         :rtype: bool
         '''
         return self._command_history.can_undo()
-    
+
     def can_redo(self) -> bool:
         '''
         Determine if the redo is possible.
-        
+
         :return: True if the redo_stack is not empty else False.
         :rtype: bool
         '''
         return self._command_history.can_redo()
-    
+
     def get_undo_stack(self) -> List[Command]:
         '''
         Return the undo stack.
@@ -116,7 +116,7 @@ class ImageStateManager:
         :rtype: List[Command]
         '''
         return self._command_history.get_undo_stack()
-    
+
     def get_redo_stack(self) -> List[Command]:
         '''
         Return the redo stack.
@@ -125,7 +125,7 @@ class ImageStateManager:
         :rtype: List[Command]
         '''
         return self._command_history.get_redo_stack()
-    
+
     def clear_history(self) -> None:
         '''
         Clear all history.
@@ -136,7 +136,7 @@ class ImageStateManager:
         '''
         Recalculate the image modifications with the command history.
         Take a command to be passed in case not save_in_history.
-        
+
         :param pass_command: The skipped type command.
         :type pass_command: Command, optional
         :return: The rebuilt image.

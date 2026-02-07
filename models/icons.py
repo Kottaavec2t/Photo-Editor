@@ -1,20 +1,21 @@
-'''Gestion des icones de l'application'''
-
-import os
-from typing import Any, Optional
-from dataclasses import dataclass, asdict, field
-from PIL import Image, ImageTk
 import customtkinter as ctk
+from PIL import Image
+import os
 from utils.text_operations import remove_file_extension
 
 class IconManager:
-    def __init__(self, filepath: str = 'images'):
+    '''
+    Manage Icons access and loading.
+
+    :param filepath: The filepath to icons folder.
+    :type filepath: str, optional
+    '''
+    def __init__(self, filepath: str = 'images') -> None:
         self._filepath = filepath
         self._icons = {} # {'name': Icon}
-
         self._load()
 
-    def _load(self):
+    def _load(self) -> None:
         '''
         Load the images to the _icons table.
         '''

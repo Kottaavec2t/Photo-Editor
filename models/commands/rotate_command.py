@@ -1,4 +1,4 @@
-from .base_command import Command
+from commands import Command
 from PIL import Image
 from utils.image_operations import rotate
 
@@ -9,13 +9,13 @@ class RotateCommand(Command):
     :param angle: The angle of rotate.
     :type angle: float
     '''
-    def __init__(self, angle: float):
+    def __init__(self, angle: float) -> None:
         self._angle = angle
-    
+
     def execute(self, image: Image.Image) -> Image.Image:
         '''
         Apply rotation adjustment.
-        
+
         :param image: The image to modify.
         :type image: Image.Image
         :return: The modified image.
