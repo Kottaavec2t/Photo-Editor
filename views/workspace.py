@@ -1,8 +1,6 @@
 import customtkinter as ctk
-from views import (
-    PhotoViewer, 
-    PanelContainer,
-)
+from views.photo_viewer import PhotoViewer 
+from views.panel_container import PanelContainer
 from controllers import EventBus
 from models import SettingsManager
 

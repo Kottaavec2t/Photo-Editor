@@ -1,4 +1,4 @@
-from commands import Command
+from models.commands import Command
 from PIL import Image
 from utils.image_operations import brightness
 

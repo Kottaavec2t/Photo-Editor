@@ -4,10 +4,8 @@ from models import (
     SettingsManager, 
     IconManager,
 )
-from views import (
-    TopBar,
-    Workspace,
-)
+from views.top_bar import TopBar
+from views.workspace import Workspace
 
 class MainWindow(ctk.CTk):
     '''
