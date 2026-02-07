@@ -105,7 +105,7 @@ class TopBar(ctk.CTkFrame):
             width=30,
             height=30,
             fg_color="transparent",
-            command=lambda: self._on_zoom_click(0.1),
+            command=lambda: self._on_zoom_click(-0.1),
             state="disabled"
         )
         self.zoom_out_btn.grid(row=0, column=0, padx=2)
@@ -117,7 +117,7 @@ class TopBar(ctk.CTkFrame):
             width=30,
             height=30,
             fg_color="transparent",
-            command=lambda: self._on_zoom_click(-0.1),
+            command=lambda: self._on_zoom_click(0.1),
             state="disabled"
         )
         self.zoom_in_btn.grid(row=0, column=1, padx=2)
