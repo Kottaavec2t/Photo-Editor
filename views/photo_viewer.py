@@ -71,7 +71,6 @@ class PhotoViewer(ctk.CTkFrame):
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
-        print('test')
         self._current_image = data['image']
         self._update_display()
 
