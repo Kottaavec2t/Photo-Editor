@@ -6,7 +6,7 @@ class EventBus:
     '''
     def __init__(self):
         self._listeners = {}
-    
+
     def subscribe(self, event_type: str, callback: Callable) -> None:
         '''
         Subscribe a callback to a specific event type.
@@ -19,11 +19,11 @@ class EventBus:
         if event_type not in self._listeners:
             self._listeners[event_type] = []
         self._listeners[event_type].append(callback)
-    
+
     def publish(self, event_type: str, data: dict = None) -> None:
         '''
         Publish an event to all subscribed callbacks.
-        
+
         :param event_type: The type of event to publish.
         :type event_type: str
         :param data: Optional data to pass to the callbacks.
