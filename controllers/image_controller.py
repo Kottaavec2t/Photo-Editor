@@ -4,6 +4,7 @@ from models import ImageStateManager
 from models.commands import (
     BrightnessCommand,
     RotateCommand,
+    GrayscaleCommand,
 )
 
 class ImageController:
@@ -147,6 +148,9 @@ class ImageController:
             case 'rotation':
                 angle = data.get('angle', 0)
                 command = RotateCommand(angle)
+            case 'grayscale':
+                value = data.get('value', False)
+                command = GrayscaleCommand(value)
             case():
                 print(f'Wrong operation type: {operation_type}')
                 return

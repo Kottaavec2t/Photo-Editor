@@ -64,6 +64,17 @@ class EditPanel(BasePanel):
         self.rotation_slider.bind("<ButtonRelease-1>", lambda e:self._rotation_changed(e, save=True))
         self.rotation_slider.pack(side=ctk.LEFT, padx=10, pady=10)
 
+        # --[[ GRAYCALE ]]
+        self.grayscale_frame = ctk.CTkFrame(self)
+        self.grayscale_frame.pack(fill=ctk.X, padx=5, pady=5)
+
+        self.grayscale_title_label = ctk.CTkLabel(self.grayscale_frame, text='Grayscale')
+        self.grayscale_title_label.pack(side=ctk.LEFT, padx=10, pady=5)
+
+        self.switch_var = ctk.StringVar(value='disable')
+        self.grayscale_switch = ctk.CTkSwitch(self.grayscale_frame, text='', command=lambda: self._grayscale_click(save=True), variable=self.switch_var, onvalue='enable', offvalue='disable')
+        self.grayscale_switch.pack(padx=10, pady=5)
+
     def _brightness_changed(self, value: float|str = None, event = None, save: bool = False) -> None:
         '''
         Handle brightness change events.
@@ -115,7 +126,7 @@ class EditPanel(BasePanel):
         Called either by slider or by entry validate.
         Rounds, validates, clamps and syncs both indicators.
         Publishes event with bool save (True on ButtonRelease else False).
-            
+
         :param value: The new value.
         :type value: float | str, optional
         :param event: Event gived by CtkWidget.
@@ -153,3 +164,20 @@ class EditPanel(BasePanel):
         self.rotation_slider.set(value)
 
         self._event_bus.publish("image_operation_applied", {'angle': value, 'operation_type': "rotation", 'save': save})
+
+    def _grayscale_click(self, save: bool = False) -> None:
+        '''
+        Handle grayscale change events.
+        Called by switch change.
+
+        :param save: If True save in history else not.
+        :type save: bool, optional
+        '''
+        # guard: called early during widget init — bail out safely
+        if not hasattr(self, "grayscale_switch"):
+            return
+
+        entry = self.switch_var.get()
+        value = True if entry == 'enable' else False
+
+        self._event_bus.publish("image_operation_applied", {'value': value, 'operation_type': "grayscale", 'save': save})
