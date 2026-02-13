@@ -7,10 +7,11 @@ class GrayscaleCommand(Command):
     Command for converting to grayscale.
 
     :param value: True for grayscale else False for normal.
-    :type value: float
+    :type value: bool
     '''
-    def __init__(self, value: float) -> None:
+    def __init__(self, value: bool) -> None:
         self._value = value
+        self._description = f"Applied grayscale." if self._value else f"Unapplied grayscale."
 
     def execute(self, image: Image.Image) -> Image.Image:
         '''
@@ -22,3 +23,6 @@ class GrayscaleCommand(Command):
         :rtype: Image.Image
         '''
         return grayscale(image) if self._value else image
+
+    def get_description(self) -> None:
+        return self._description

@@ -11,6 +11,7 @@ class RotateCommand(Command):
     '''
     def __init__(self, angle: float) -> None:
         self._angle = angle
+        self._description = f"Rotation changed to {self._angle}°."
 
     def execute(self, image: Image.Image) -> Image.Image:
         '''
@@ -22,3 +23,6 @@ class RotateCommand(Command):
         :rtype: Image.Image
         '''
         return rotate(image, self._angle)
+
+    def get_description(self) -> None:
+        return self._description

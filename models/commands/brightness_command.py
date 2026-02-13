@@ -11,6 +11,7 @@ class BrightnessCommand(Command):
     '''
     def __init__(self, factor: float) -> None:
         self._factor = factor
+        self._description = f"Brightness changed to {self._factor}."
     
     def execute(self, image: Image.Image) -> Image.Image:
         '''
@@ -22,3 +23,6 @@ class BrightnessCommand(Command):
         :rtype: Image.Image
         '''
         return brightness(image, self._factor)
+
+    def get_description(self) -> None:
+        return self._description

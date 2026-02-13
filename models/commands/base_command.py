@@ -16,3 +16,7 @@ class Command(ABC):
         :rtype: Image.Image
         '''
         pass
+    
+    @abstractmethod
+    def get_description(self) -> None:
+        pass
