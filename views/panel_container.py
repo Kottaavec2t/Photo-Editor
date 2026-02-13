@@ -5,7 +5,7 @@ from models import (
     SettingsManager,
 )
 
-class PanelContainer(ctk.CTkFrame):
+class PanelContainer(ctk.CTkScrollableFrame):
     '''
     Lateral Panel container.
 
