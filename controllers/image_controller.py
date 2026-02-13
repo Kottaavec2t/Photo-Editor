@@ -56,6 +56,7 @@ class ImageController:
             image = self._image_state.get_current_image()
             print(image)
             self._event_bus.publish("image_loaded", {'image': image})
+            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         except Exception as e:
             messagebox.showerror("Error", f"Unable to load image: {e}")
 
@@ -107,6 +108,8 @@ class ImageController:
             self._event_bus.publish("redo_available", {'available': self._image_state.can_redo()})
             # Notify that undo availability changed
             self._event_bus.publish("undo_available", {'available': self._image_state.can_undo()})
+            # Publish new stacks
+            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         else:
             messagebox.showinfo("Info", "Nothing to undo")
 
@@ -125,6 +128,8 @@ class ImageController:
             self._event_bus.publish("undo_available", {'available': self._image_state.can_undo()})
             # Notify that redo availability changed
             self._event_bus.publish("redo_available", {'available': self._image_state.can_redo()})
+            # Publish new stacks
+            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         else:
             messagebox.showinfo("Info", "Nothing to redo")
 
@@ -163,3 +168,4 @@ class ImageController:
             self._event_bus.publish("image_modified", {'image': result})
         self._event_bus.publish("undo_available", {'available': self._image_state.can_undo()})
         self._event_bus.publish("redo_available", {'available': self._image_state.can_redo()})
+        self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})

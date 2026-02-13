@@ -7,7 +7,8 @@
         "position": "right",
         "width": 500,
         "enabled": [
-            "edit"
+            "edit",
+            "history"
         ]
     }
 }

@@ -34,7 +34,9 @@ class PhotoViewer(ctk.CTkFrame):
             self,
             yscrollcommand=self.yscroll.set,
             xscrollcommand=self.xscroll.set,
-            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1] # Transparent bg
+            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1], # Transparent bg
+            highlightthickness=0, 
+            relief='ridge'
         )
         self.canvas.pack(fill=ctk.BOTH, expand=True)
         
@@ -42,7 +44,7 @@ class PhotoViewer(ctk.CTkFrame):
         self.xscroll.configure(command=self.canvas.xview)
         
         # Label for the image
-        self.image_label = ctk.CTkLabel(self.canvas, text="Aucune image")
+        self.image_label = ctk.CTkLabel(self.canvas, text="")
         self.canvas_window = self.canvas.create_window(
             0, 0,
             window=self.image_label
