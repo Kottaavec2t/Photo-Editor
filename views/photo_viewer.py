@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from controllers import EventBus
+from models import SettingsManager
 
 class PhotoViewer(ctk.CTkFrame):
     '''
@@ -7,10 +8,13 @@ class PhotoViewer(ctk.CTkFrame):
 
     :param event_bus: The global event_bus to communicate with others scripts.
     :type event_bus: EventBus
+    :param settings: The global settings manager to access settings from nowhere.
+    :type settings: SettingsManager
     '''
-    def __init__(self, master, event_bus: EventBus) -> None:
+    def __init__(self, master, event_bus: EventBus, settings: SettingsManager) -> None:
         super().__init__(master, fg_color="transparent")
         self._event_bus = event_bus
+        self._settings = settings
         self._zoom = 1.0
         self._current_image = None
         
@@ -34,7 +38,7 @@ class PhotoViewer(ctk.CTkFrame):
             self,
             yscrollcommand=self.yscroll.set,
             xscrollcommand=self.xscroll.set,
-            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1], # Transparent bg
+            bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1] if self._settings.get("appearance") == 'Dark' else None,
             highlightthickness=0, 
             relief='ridge'
         )

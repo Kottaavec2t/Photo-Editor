@@ -32,7 +32,7 @@ class Workspace(ctk.CTkFrame):
         '''
         Setup the UI components of the workspace.
         '''
-        self.photo_frame = PhotoViewer(self, self._event_bus)
+        self.photo_frame = PhotoViewer(self, self._event_bus, self._settings)
         self.panel_container = PanelContainer(self, self._event_bus, self._settings)
 
         panels_settings = self._settings.get("panels")
