@@ -29,24 +29,24 @@ class PhotoViewer(ctk.CTkFrame):
         '''
         self.yscroll = ctk.CTkScrollbar(self, orientation=ctk.VERTICAL)
         self.yscroll.pack(side=ctk.RIGHT, fill=ctk.Y)
-        
+
         self.xscroll = ctk.CTkScrollbar(self, orientation=ctk.HORIZONTAL)
         self.xscroll.pack(side=ctk.BOTTOM, fill=ctk.X)
-        
+
         # Canvas
         self.canvas = ctk.CTkCanvas(
             self,
             yscrollcommand=self.yscroll.set,
             xscrollcommand=self.xscroll.set,
             bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"][1] if self._settings.get("appearance") == 'Dark' else None,
-            highlightthickness=0, 
+            highlightthickness=0,
             relief='ridge'
         )
         self.canvas.pack(fill=ctk.BOTH, expand=True)
-        
+
         self.yscroll.configure(command=self.canvas.yview)
         self.xscroll.configure(command=self.canvas.xview)
-        
+
         # Label for the image
         self.image_label = ctk.CTkLabel(self.canvas, text="")
         self.canvas_window = self.canvas.create_window(
@@ -73,7 +73,7 @@ class PhotoViewer(ctk.CTkFrame):
     def _on_image_update(self, data: dict = None) -> None:
         '''
         Update display with new image.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
@@ -85,10 +85,10 @@ class PhotoViewer(ctk.CTkFrame):
         Resize image with new zoom.
         '''
         if self._current_image is None: return
-        
+
         width = int(self._current_image.width * self._zoom)
         height = int(self._current_image.height * self._zoom)
-        
+
         ctk_image = ctk.CTkImage(
             self._current_image,
             size=(width, height)
@@ -104,7 +104,7 @@ class PhotoViewer(ctk.CTkFrame):
     def _on_mousewheel(self, event) -> None:
         '''
         Manage scrolling with scrollwheel.
-        
+
         :param event: Event gived by CtkWidget
         :type event: any, optional
         '''
@@ -136,7 +136,7 @@ class PhotoViewer(ctk.CTkFrame):
     def _on_zoom_changed(self, data: dict = None) -> None:
         '''
         Manage zoom changed.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
@@ -153,18 +153,18 @@ class PhotoViewer(ctk.CTkFrame):
         :type axe: str, optional
         '''
         self.canvas.update_idletasks()
-        
+
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
-        
+
         scroll_region = self.canvas.cget("scrollregion")
         if scroll_region:
             coords = scroll_region.split()
             if len(coords) == 4:
                 content_width = float(coords[2]) - float(coords[0])
                 content_height = float(coords[3]) - float(coords[1])
-                
-                if axe == 'y': return content_height > canvas_height 
-                if axe == 'x': return content_width > canvas_width 
-        
+
+                if axe == 'y': return content_height > canvas_height
+                if axe == 'x': return content_width > canvas_width
+
         return False

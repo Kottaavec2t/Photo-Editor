@@ -47,10 +47,10 @@ class ImageController:
             title="Choose an image",
             filetypes=filetypes
         )
-        
+
         if not filepath:
             return
-        
+
         try:
             self._image_state.load_image(filepath)
             image = self._image_state.get_current_image()
@@ -68,26 +68,26 @@ class ImageController:
         :type data: dict, optional
         '''
         current_image = self._image_state.get_current_image()
-        
+
         if current_image is None:
             messagebox.showwarning("Warning", "No image to save")
             return
-        
+
         filetypes = [
             ("PNG", "*.png"),
             ("JPEG", "*.jpg *.jpeg"),
             ("All files", "*.*")
         ]
-        
+
         filepath = filedialog.asksaveasfilename(
             title="Save Image",
             defaultextension=".png",
             filetypes=filetypes
         )
-        
+
         if not filepath:
             return
-        
+
         try:
             current_image.save(filepath)
         except Exception as e:
@@ -101,7 +101,7 @@ class ImageController:
         :type data: dict, optional
         '''
         image = self._image_state.undo()
-        
+
         if image:
             self._event_bus.publish("image_modified", {'image': image})
             # Notify that redo is available
@@ -121,7 +121,7 @@ class ImageController:
         :type data: dict, optional
         '''
         image = self._image_state.redo()
-        
+
         if image:
             self._event_bus.publish("image_modified", {'image': image})
             # Notify that undo is available
@@ -141,10 +141,10 @@ class ImageController:
         :type data: dict, optional
         '''
         if data is None: return
-        
+
         # Determine the operation type if provided
         operation_type = data.get('operation_type', None)
-        
+
         # Create appropriate command based on type
         match operation_type:
             case 'brightness':
@@ -159,7 +159,7 @@ class ImageController:
             case():
                 print(f'Wrong operation type: {operation_type}')
                 return
-        
+
         # Execute the command
         result = self._image_state.execute_command(command, data.get('save', False))
 

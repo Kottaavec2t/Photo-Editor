@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from controllers import EventBus
 from models import (
-    IconManager, 
+    IconManager,
     SettingsManager,
 )
 
@@ -22,13 +22,13 @@ class TopBar(ctk.CTkFrame):
         self._settings = settings
         self._icons = icons
         self.configure(height=40)
-        
+
         # Create all widgets
         self._create_action_buttons()
         self._create_file_buttons()
         self._create_zoom_buttons()
         self._create_search_bar()
-        
+
         # Events Subscribing
         self._setup_subscriptions()
 
@@ -38,7 +38,7 @@ class TopBar(ctk.CTkFrame):
         '''
         action_frame = ctk.CTkFrame(self, fg_color="transparent")
         action_frame.pack(side=ctk.LEFT, padx=5, pady=5)
-        
+
         self.undo_btn = ctk.CTkButton(
             action_frame,
             text='',
@@ -50,7 +50,7 @@ class TopBar(ctk.CTkFrame):
             state="disabled"
         )
         self.undo_btn.grid(row=0, column=0, padx=2)
-        
+
         self.redo_btn = ctk.CTkButton(
             action_frame,
             text='',
@@ -69,7 +69,7 @@ class TopBar(ctk.CTkFrame):
         '''
         file_frame = ctk.CTkFrame(self, fg_color="transparent")
         file_frame.pack(side=ctk.LEFT, padx=5, pady=5)
-        
+
         self.import_btn = ctk.CTkButton(
             file_frame,
             text='',
@@ -80,7 +80,7 @@ class TopBar(ctk.CTkFrame):
             command=self._on_import_click
         )
         self.import_btn.grid(row=0, column=0, padx=2)
-        
+
         self.save_btn = ctk.CTkButton(
             file_frame,
             text='',
@@ -99,7 +99,7 @@ class TopBar(ctk.CTkFrame):
         '''
         zoom_frame = ctk.CTkFrame(self, fg_color="transparent")
         zoom_frame.pack(side=ctk.LEFT, padx=5, pady=5)
-        
+
         self.zoom_out_btn = ctk.CTkButton(
             zoom_frame,
             text='',
@@ -111,7 +111,7 @@ class TopBar(ctk.CTkFrame):
             state="disabled"
         )
         self.zoom_out_btn.grid(row=0, column=0, padx=2)
-        
+
         self.zoom_in_btn = ctk.CTkButton(
             zoom_frame,
             text='',
@@ -130,7 +130,7 @@ class TopBar(ctk.CTkFrame):
         '''
         search_frame = ctk.CTkFrame(self, fg_color="transparent")
         search_frame.pack(padx=5, pady=5)
-        
+
         # Entry de recherche
         self.search_entry = ctk.CTkEntry(
             search_frame,
@@ -143,7 +143,7 @@ class TopBar(ctk.CTkFrame):
         )
         self.search_entry.grid(row=0, column=0, padx=5)
         self.search_entry.bind("<Return>", lambda e: self._on_search())
-        
+
         # Bouton Clear
         self.clear_btn = ctk.CTkButton(
             search_frame,
@@ -155,7 +155,7 @@ class TopBar(ctk.CTkFrame):
             command=self._on_clear_search
         )
         self.clear_btn.grid(row=0, column=1, padx=2)
-        
+
         # Bouton Search
         self.search_btn = ctk.CTkButton(
             search_frame,
@@ -215,10 +215,10 @@ class TopBar(ctk.CTkFrame):
         Manage search bar entrys.
         '''
         query = self.search_entry.get().strip()
-        
+
         if not query:
             return
-        
+
         # Détection de commandes (commence par /)
         if query.startswith('/'):
             self._execute_command(query)
@@ -242,11 +242,11 @@ class TopBar(ctk.CTkFrame):
         parts = command.split(' ')
         cmd = parts[0].lower()
         args = parts[1:] if len(parts) > 1 else []
-        
+
         commands = {
             '/restart': self._cmd_restart,
         }
-        
+
         if cmd in commands:
             commands[cmd](args)
         else:
@@ -254,7 +254,7 @@ class TopBar(ctk.CTkFrame):
                 "type": "error",
                 "text": f"Commande inconnue : {cmd}. Tapez /help pour la liste."
             })
-        
+
         # Efface la commande après exécution
         self.search_entry.delete(0, 'end')
 
@@ -270,7 +270,7 @@ class TopBar(ctk.CTkFrame):
     def _on_image_loaded(self, data: dict = None) -> None:
         '''
         Enable buttons when image is loaded.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
@@ -281,7 +281,7 @@ class TopBar(ctk.CTkFrame):
     def _on_image_modified(self, data: dict = None) -> None:
         '''
         React to image modification.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
@@ -290,7 +290,7 @@ class TopBar(ctk.CTkFrame):
     def _update_undo_button(self, data: dict = None) -> None:
         '''
         Enable/Disable Undo buttons.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
@@ -301,7 +301,7 @@ class TopBar(ctk.CTkFrame):
     def _update_redo_button(self, data: dict = None) -> None:
         '''
         Enable/Disable Redo buttons.
-        
+
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
