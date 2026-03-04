@@ -32,4 +32,4 @@ class NotificationsController:
         title = data.get("title", "Warning")
         corpse = data.get("corpse", "")
 
-        messagebox.showerror(title, corpse, icon=messagebox.WARNING)
+        messagebox.showwarning(title, corpse, icon=messagebox.WARNING)
