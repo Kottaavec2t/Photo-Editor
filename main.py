@@ -2,6 +2,7 @@ from views.main_window import MainWindow
 from controllers import (
     ImageController, 
     EventBus,
+    NotificationsController,
 )
 from models import (
     ImageStateManager, 
@@ -17,10 +18,11 @@ def main():
     image_state = ImageStateManager()
     icons = IconManager()
     settings = SettingsManager()
-    controller = ImageController(event_bus, image_state)
+    image_controller = ImageController(event_bus, image_state)
+    notifications_controller = NotificationsController(app, event_bus)
     
     app = MainWindow(event_bus, settings, icons)
     app.mainloop()
-
+    
 if __name__ == "__main__":
     main()
