@@ -1,0 +1,15 @@
+{
+  "ignore": [
+    "docs",
+    "src/generated",
+    "**/*.min.js"
+  ],
+  "rules": {
+    "disable": [
+      "magic_numbers"
+    ]
+  },
+  "thresholds": {
+    "maxFileLines": 500
+  }
+}
