@@ -58,7 +58,7 @@ class ImageController:
             self._event_bus.publish("image_loaded", {'image': image})
             self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         except Exception as e:
-            messagebox.showerror("Error", f"Unable to load image: {e}")
+            self._event_bus.publish("error_notification", {'corpse': f"An error occured during import process: {e}"})
 
     def _handle_save(self, data: dict = None) -> None:
         '''
@@ -70,7 +70,7 @@ class ImageController:
         current_image = self._image_state.get_current_image()
 
         if current_image is None:
-            messagebox.showwarning("Warning", "No image to save")
+            self._event_bus.publish("warning_notification", {'corpse': "No image to save"})
             return
 
         filetypes = [
@@ -91,7 +91,7 @@ class ImageController:
         try:
             current_image.save(filepath)
         except Exception as e:
-            messagebox.showerror("Error", f"Unable to save image: {e}")
+            self._event_bus.publish("error_notification", {'corpse': f"An error occured during save process: {e}"})
 
     def _handle_undo(self, data: dict = None) -> None:
         '''
@@ -111,7 +111,7 @@ class ImageController:
             # Publish new stacks
             self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         else:
-            messagebox.showinfo("Info", "Nothing to undo")
+            self._event_bus.publish("info_notification", {'corpse': "Nothing to undo"})
 
     def _handle_redo(self, data: dict = None) -> None:
         '''
@@ -131,7 +131,7 @@ class ImageController:
             # Publish new stacks
             self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         else:
-            messagebox.showinfo("Info", "Nothing to redo")
+            self._event_bus.publish("info_notification", {'corpse': "Nothing to redo"})
 
     def _handle_operation(self, data: dict = None) -> None:
         '''
