@@ -1,4 +1,5 @@
 from tkinter import messagebox, filedialog
+from PIL import Image
 from controllers import EventBus
 from models import ImageStateManager
 from models.commands import (
@@ -25,11 +26,29 @@ class ImageController:
         '''
         Subscribe to events.
         '''
+        self._event_bus.subscribe("new_requested", self._handle_new)
         self._event_bus.subscribe("import_requested", self._handle_import)
         self._event_bus.subscribe("save_requested", self._handle_save)
         self._event_bus.subscribe("undo_requested", self._handle_undo)
         self._event_bus.subscribe("redo_requested", self._handle_redo)
         self._event_bus.subscribe("image_operation_applied", self._handle_operation)
+
+    def _handle_new(self, data: dict = None) -> None:
+        '''
+        Handle new image request.
+
+        :param data: Datas from event_bus.
+        :type data: dict, optional
+        '''
+        # Add current image erase warning
+        
+        try:
+            image = Image.new("RGB", (500, 500), (255, 255, 255))
+            self._image_state.load_image(image=image)
+            self._event_bus.publish("image_loaded", {'image': image})
+            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
+        except Exception as e:
+            self._event_bus.publish("error_notification", {'corpse': f"An error occured during new image creation process: {e}"})
 
     def _handle_import(self, data: dict = None) -> None:
         '''

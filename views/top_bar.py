@@ -65,10 +65,21 @@ class TopBar(ctk.CTkFrame):
 
     def _create_file_buttons(self) -> None:
         '''
-        Import/Save buttons.
+        New/Import/Save buttons.
         '''
         file_frame = ctk.CTkFrame(self, fg_color="transparent")
         file_frame.pack(side=ctk.LEFT, padx=5, pady=5)
+
+        self.new_btn = ctk.CTkButton(
+            file_frame,
+            text='',
+            image=self._icons.get('add'),
+            width=30,
+            height=30,
+            fg_color="transparent",
+            command=self._on_new_click
+        )
+        self.new_btn.grid(row=0, column=0, padx=2)
 
         self.import_btn = ctk.CTkButton(
             file_frame,
@@ -79,7 +90,7 @@ class TopBar(ctk.CTkFrame):
             fg_color="transparent",
             command=self._on_import_click
         )
-        self.import_btn.grid(row=0, column=0, padx=2)
+        self.import_btn.grid(row=0, column=1, padx=2)
 
         self.save_btn = ctk.CTkButton(
             file_frame,
@@ -91,7 +102,7 @@ class TopBar(ctk.CTkFrame):
             command=self._on_save_click,
             state="disabled"
         )
-        self.save_btn.grid(row=0, column=1, padx=2)
+        self.save_btn.grid(row=0, column=2, padx=2)
 
     def _create_zoom_buttons(self) -> None:
         '''
@@ -188,6 +199,12 @@ class TopBar(ctk.CTkFrame):
         Ask redo.
         '''
         self._event_bus.publish("redo_requested")
+
+    def _on_new_click(self):
+        '''
+        Ask for new image.
+        '''
+        self._event_bus.publish("new_requested")
 
     def _on_import_click(self) -> None:
         '''

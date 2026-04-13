@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import Tk, Label, Entry
 
-import numpy
-
 from PIL import Image, ImageTk, ImageDraw
 
 CURRENT_MODE = 'fill'
@@ -26,7 +24,7 @@ b_entry.insert(0, "B")
 pen_size_entry = Entry(root)
 pen_size_entry.insert(0, "pen size (pixel)")
 
-image = Image.new("RGB", (400, 400))
+image = Image.new("RGB", (500, 500))
 width, height = image.size
 draw_frame.config(bg="#444444")
 

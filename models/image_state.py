@@ -16,14 +16,15 @@ class ImageStateManager:
         self._current_image: Image.Image | None = None
         self._command_history = CommandHistory(max_history)
 
-    def load_image(self, fp: str) -> None:
+    def load_image(self, fp: str = None, image: Image.Image = None) -> None:
         '''
         Loads a new image and resets history.
 
         :param fp: The file path of the image to load.
         :type fp: str
         '''
-        image = Image.open(fp)
+        if fp: image = Image.open(fp)
+        elif not image: return
         self._base_image = image.copy()
         self._current_image = image.copy()
         self._command_history.clear_history()
