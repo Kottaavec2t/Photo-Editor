@@ -19,7 +19,7 @@ def main():
     icons = IconManager()
     settings = SettingsManager()
     image_controller = ImageController(event_bus, image_state)
-    notifications_controller = NotificationsController(app, event_bus)
+    notifications_controller = NotificationsController(event_bus)
     
     app = MainWindow(event_bus, settings, icons)
     app.mainloop()
