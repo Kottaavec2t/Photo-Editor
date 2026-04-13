@@ -73,7 +73,6 @@ class ImageController:
         try:
             self._image_state.load_image(filepath)
             image = self._image_state.get_current_image()
-            print(image)
             self._event_bus.publish("image_loaded", {'image': image})
             self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
         except Exception as e:
