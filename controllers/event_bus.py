@@ -32,4 +32,6 @@ class EventBus:
         if event_type in self._listeners:
             for callback in self._listeners[event_type]:
                 print('publishing event:', event_type, 'with data:', data)
-                callback(data)
+                callback_datas = callback(data)
+                if callback_datas:
+                    return callback_datas
