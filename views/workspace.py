@@ -36,13 +36,7 @@ class Workspace(ctk.CTkFrame):
         self.panel_container = PanelContainer(self, self._event_bus, self._settings)
 
         panels_settings = self._settings.get("panels")
-
-        if panels_settings and panels_settings.get("position") == "right":
-            self.panel_container.pack(side=ctk.RIGHT, fill=ctk.Y)
-            self.photo_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True)
-        else:
-            self.panel_container.pack(side=ctk.LEFT, fill=ctk.Y)
-            self.photo_frame.pack(side=ctk.RIGHT, fill=ctk.BOTH, expand=True)
+        self._on_panel_configuration_changed({'panels': panels_settings})
 
     def _on_panel_configuration_changed(self, data: dict = None) -> None:
         '''
@@ -51,6 +45,11 @@ class Workspace(ctk.CTkFrame):
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
+        # if no panels active then do nothing
+        if len(data['panels'].get("enabled")) == 0:
+            self.photo_frame.pack(fill=ctk.BOTH, expand=True)
+            return
+        
         if data['panels'].get("position") == "right":
             self.panel_container.pack(side=ctk.RIGHT, fill=ctk.Y)
             self.photo_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True)

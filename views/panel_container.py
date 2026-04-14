@@ -34,15 +34,11 @@ class PanelContainer(ctk.CTkScrollableFrame):
         Setup the UI components of the panel container.
         '''
         panels_settings = self._settings.get("panels")
+
         width = panels_settings.get("width", 300)
         self.configure(width=width)
 
-        for panel_name in panels_settings.get("enabled"):
-            PanelRegistry.register_panel(panel_name)
-            panel_class = PanelRegistry.get_panel(panel_name)
-            if panel_class:
-                panel_instance = panel_class(self, self._event_bus)
-                panel_instance.pack(fill=ctk.X, padx=5, pady=5)
+        self._on_panel_order_changed()
 
     def _on_panel_order_changed(self, data: dict = None) -> None:
         '''
@@ -51,4 +47,15 @@ class PanelContainer(ctk.CTkScrollableFrame):
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
-        pass
+        # del all panels
+        for child in self.winfo_children():
+            child.destroy()
+
+        # Recreate panels in new order
+        panels_settings = self._settings.get("panels")
+        for panel_name in panels_settings.get("enabled"):
+            PanelRegistry.register_panel(panel_name)
+            panel_class = PanelRegistry.get_panel(panel_name)
+            if panel_class:
+                panel_instance = panel_class(self, self._event_bus)
+                panel_instance.pack(fill=ctk.X, padx=5, pady=5)
