@@ -1,4 +1,4 @@
-from tkinter import messagebox, filedialog
+from tkinter import filedialog
 from PIL import Image
 from controllers import EventBus
 from models import ImageStateManager
@@ -40,15 +40,20 @@ class ImageController:
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
-        # Add current image erase warning
-        
-        try:
-            image = Image.new("RGB", (500, 500), (255, 255, 255))
-            self._image_state.load_image(image=image)
-            self._event_bus.publish("image_loaded", {'image': image})
-            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
-        except Exception as e:
-            self._event_bus.publish("error_notification", {'corpse': f"An error occured during new image creation process: {e}"})
+        answer = False
+        if self._image_state.get_current_image() is not None:
+            answer = self._event_bus.publish("yesno_notification", {'title': 'Save your file',
+                                                                    'corpse': "Do you want to save changes ?",
+                                                                    'icon': "warning"
+                                                                    })
+        if not answer:
+            try:
+                image = Image.new("RGB", (500, 500), (255, 255, 255))
+                self._image_state.load_image(image=image)
+                self._event_bus.publish("image_loaded", {'image': image})
+                self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
+            except Exception as e:
+                self._event_bus.publish("error_notification", {'corpse': f"An error occured during new image creation process: {e}"})
 
     def _handle_import(self, data: dict = None) -> None:
         '''

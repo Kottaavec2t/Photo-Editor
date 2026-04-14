@@ -15,6 +15,7 @@ class NotificationsController:
         self._event_bus.subscribe("info_notification", self._info_notification)
         self._event_bus.subscribe("error_notification", self._error_notification)
         self._event_bus.subscribe("warning_notification", self._warning_notification)
+        self._event_bus.subscribe("yesno_notification", self._yesno_notification)
 
     def _info_notification(self, data: dict = None) -> None:
         title = data.get("title", "Info")
@@ -33,3 +34,10 @@ class NotificationsController:
         corpse = data.get("corpse", "")
 
         messagebox.showwarning(title, corpse, icon=messagebox.WARNING)
+
+    def _yesno_notification(self, data: dict = None) -> None:
+        title = data.get("title", "Confirmation")
+        corpse = data.get("corpse", "")
+        icon = data.get("icon", messagebox.YESNO)
+
+        return messagebox.askyesno(title, corpse, icon=icon)
