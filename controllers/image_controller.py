@@ -46,14 +46,15 @@ class ImageController:
                                                                     'corpse': "Do you want to save changes ?",
                                                                     'icon': "warning"
                                                                     })
-        if not answer:
-            try:
-                image = Image.new("RGB", (500, 500), (255, 255, 255))
-                self._image_state.load_image(image=image)
-                self._event_bus.publish("image_loaded", {'image': image})
-                self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
-            except Exception as e:
-                self._event_bus.publish("error_notification", {'corpse': f"An error occured during new image creation process: {e}"})
+        if answer:
+            self._event_bus.publish("save_requested")
+        try:
+            image = Image.new("RGB", (500, 500), (255, 255, 255))
+            self._image_state.load_image(image=image)
+            self._event_bus.publish("image_loaded", {'image': image})
+            self._event_bus.publish("history_updated", {'undo_stack': self._image_state.get_undo_stack(), 'redo_stack': self._image_state.get_redo_stack()})
+        except Exception as e:
+            self._event_bus.publish("error_notification", {'corpse': f"An error occured during new image creation process: {e}"})
 
     def _handle_import(self, data: dict = None) -> None:
         '''
