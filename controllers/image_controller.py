@@ -42,12 +42,14 @@ class ImageController:
         '''
         answer = False
         if self._image_state.get_current_image() is not None:
-            answer = self._event_bus.publish("yesno_notification", {'title': 'Save your file',
+            answer = self._event_bus.publish("yesnocancel_notification", {'title': 'Save your file',
                                                                     'corpse': "Do you want to save changes ?",
                                                                     'icon': "warning"
                                                                     })
-        if answer:
+        if answer == "yes":
             self._event_bus.publish("save_requested")
+        elif answer == "cancel":
+            return
         try:
             image = Image.new("RGB", (500, 500), (255, 255, 255))
             self._image_state.load_image(image=image)
