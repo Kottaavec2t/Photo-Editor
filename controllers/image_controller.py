@@ -65,20 +65,27 @@ class ImageController:
         :param data: Datas from event_bus.
         :type data: dict, optional
         '''
-        filetypes = [
+        answer = False
+        if self._image_state.get_current_image() is not None:
+            answer = self._event_bus.publish("yesnocancel_notification", {'title': 'Save your file',
+                                                                    'corpse': "Do you want to save changes ?",
+                                                                    'icon': "warning"
+                                                                    })
+        if answer == "yes":
+            self._event_bus.publish("save_requested")
+        elif answer == "cancel":
+            return
+        try:
+            filetypes = [
             ("Images", "*.png *.jpg *.jpeg *.gif *.bmp"),
             ("All files", "*.*")
-        ]
-        
-        filepath = filedialog.askopenfilename(
-            title="Choose an image",
-            filetypes=filetypes
-        )
-
-        if not filepath:
-            return
-
-        try:
+            ]
+            filepath = filedialog.askopenfilename(
+                title="Choose an image",
+                filetypes=filetypes
+            )
+            if not filepath: return
+            
             self._image_state.load_image(filepath)
             image = self._image_state.get_current_image()
             self._event_bus.publish("image_loaded", {'image': image})
