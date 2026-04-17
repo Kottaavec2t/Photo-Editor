@@ -16,6 +16,9 @@ class NotificationsController:
         self._event_bus.subscribe("error_notification", self._error_notification)
         self._event_bus.subscribe("warning_notification", self._warning_notification)
         self._event_bus.subscribe("yesno_notification", self._yesno_question)
+        self._event_bus.subscribe("okcancel_notification", self._okcancel_question)
+        self._event_bus.subscribe("retrycancel_notification", self._retrycancel_question)
+        self._event_bus.subscribe("yesnocancel_notification", self._yesnocancel_question)
 
     def _info_notification(self, data: dict = None) -> None:
         title = data.get("title", "Info")
@@ -35,9 +38,30 @@ class NotificationsController:
 
         messagebox.showwarning(title, corpse, icon=messagebox.WARNING)
 
-    def _yesno_question(self, data: dict = None) -> None:
+    def _yesno_question(self, data: dict = None) -> bool | None:
         title = data.get("title", "Confirmation")
         corpse = data.get("corpse", "")
         icon = data.get("icon", messagebox.YESNO)
 
-        return messagebox.askyesno(title, corpse, icon=icon)
+        return messagebox.askquestion(title, corpse, icon=icon, type=messagebox.YESNO)
+    
+    def _okcancel_question(self, data: dict = None) -> bool | None:
+        title = data.get("title", "Confirmation")
+        corpse = data.get("corpse", "")
+        icon = data.get("icon", messagebox.OKCANCEL)
+
+        return messagebox.askquestion(title, corpse, icon=icon, type=messagebox.OKCANCEL)
+    
+    def _retrycancel_question(self, data: dict = None) -> bool | None:
+        title = data.get("title", "Confirmation")
+        corpse = data.get("corpse", "")
+        icon = data.get("icon", messagebox.RETRYCANCEL)
+
+        return messagebox.askquestion(title, corpse, icon=icon, type=messagebox.RETRYCANCEL)
+    
+    def _yesnocancel_question(self, data: dict = None) -> bool | None:
+        title = data.get("title", "Confirmation")
+        corpse = data.get("corpse", "")
+        icon = data.get("icon", messagebox.YESNOCANCEL)
+
+        return messagebox.askquestion(title, corpse, icon=icon, type=messagebox.YESNOCANCEL)
